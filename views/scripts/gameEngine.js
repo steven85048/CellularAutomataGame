@@ -18,7 +18,14 @@ $.ajax({
 // ========================= GAME VAR CONFIGURATION == ===========================
 // ===============================================================================
 
-var game = new Phaser.Game(gameConfig.boardState.initialWidth, gameConfig.boardState.intiialHeight, Phaser.AUTO, null, {preload: preload, create: create});
+var game = new Phaser.Game(gameConfig.boardState.initialWidth, gameConfig.boardState.intiialHeight, Phaser.AUTO, null, {preload: preload, create: create, update: update});
+
+// ===============================================================================
+// ========================= GAME GLOBAL VARIABLES ===============================
+// ===============================================================================
+
+var focusedObject;
+var board;
 
 // ===============================================================================
 // ========================= MAIN EVENT THREAD METHODS ===========================
@@ -28,12 +35,11 @@ var game = new Phaser.Game(gameConfig.boardState.initialWidth, gameConfig.boardS
 function preload () {
 
     // LOAD THE RELEVANT RESOURCES
-    this.load.image('sky', './assets/sky.png');
-    this.load.image('dude', './assets/dude.png');
-    this.load.image('star', './assets/star.png');
+    game.load.image('sky', './assets/sky.png');
+    game.load.image('dude', './assets/dude.png');
+    game.load.image('star', './assets/star.png');
 
     // CONFIGURE THE GAME SCALING
-    //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
 
@@ -43,20 +49,28 @@ function preload () {
 
 // CREATE THE INITIAL GAME STATE
 function create () {
-    this.add.image(0, 0, 'sky');
-    var particles = this.add.particles('star');
+    // get height and width from the config 
+    var boardHeight = gameConfig.gameConfig.boardCellHeight;
+    var boardWidth = gameConfig.gameConfig.boardCellWidth;
 
-    var emitter = particles.createEmitter({
-        speed: 100,
-        scale: {start: 1, end: 0},
-        blendMode: 'ADD'
-    });
+    // NOTE: coordinates referenced with (height, width) or (y, x);
+    board = new Array(boardHeight);
+    for(var i = 0 ; i < boardHeight; i++){
+        board[i] = new Array(boardWidth);
+    }
 
-    var logo = this.physics.add.image(400,100, 'dude');
+    // initialize the initial board state (all zero - empty)
+    for (var i = 0 ; i < boardHeight; i++){
+        for (var j = 0 ; j < boardWidth; j++){
+            board[i][j] = 0;
+        }
+    }
 
-    logo.setVelocity(100, 200);
-    logo.setBounce(1,1);
-    logo.setCollideWorldBounds(true);
+    focusedObject = game.add.sprite(50, 50, 'star');
+}
 
-    emitter.startFollow(logo);
+// UPDATE FUNCTION CONTINUALLY RUNS IN BACKGROUND
+function update () {
+    focusedObject.x += 1;
+    focusedObject.y += 1;
 }
