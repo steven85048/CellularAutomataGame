@@ -1,5 +1,5 @@
 // ===============================================================================
-// ========================= CONFIG SETUP ============ ===========================
+// ========================= CONFIG SETUP ========================================
 // ===============================================================================
 
 var gameConfig = {};
@@ -18,7 +18,7 @@ $.ajax({
 // ========================= GAME VAR CONFIGURATION == ===========================
 // ===============================================================================
 
-var game = new Phaser.Game(gameConfig.boardState.initialWidth, gameConfig.boardState.intiialHeight, Phaser.AUTO, null, {preload: preload, create: create, update: update});
+var game = new Phaser.Game(gameConfig.boardState.initialWidth, gameConfig.boardState.intiialHeight, Phaser.CANVAS, null, {preload: preload, create: create, update: update});
 
 // ===============================================================================
 // ========================= GAME GLOBAL VARIABLES ===============================
@@ -32,7 +32,10 @@ var cellWidth;
 
 // game state vars
 var board;
-var selectedCellState; // state of the cell the user is currently grabbing
+var selectedCellState = 1; // state of the cell the user is currently grabbing
+
+var selectedX;
+var selectedY;
 
 // ============================ TILEMAP VARIABLES ==============================
 
@@ -42,6 +45,18 @@ var mainLayer;
 
 // marker variable for highlighting selected cell
 var marker;
+
+// ========================= PLAYER VARIABLES ==================================
+
+// player
+var player;
+
+// keys
+var wKey;
+var aKey;
+var sKey;
+var dKey;
+
 
 // ===============================================================================
 // ========================= MAIN EVENT THREAD METHODS ===========================
@@ -111,10 +126,53 @@ function create () {
 
     // add event listener for whenever the user clicks a cell on the graph
     game.input.addMoveCallback(inputEvent, this);
+
+
+    /*
+    // ==================== Player Sprite Initialization ============================================
+    game.physics.startSystem(Phaser.Physics.P2JS);
+    player = game.add.sprite(48, 48, 'dude');
+    game.physics.p2.enable(player);
+    game.camera.follow(player);
+
+    // ENABLE CURSORS
+    wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+    */
+
+    // =================== Timer Initialization =======================================================
+
+    game.time.events.repeat(Phaser.Timer.SECOND * 5, 10, cellularAutomataUpdate, this);
 }
 
 // UPDATE FUNCTION CONTINUALLY RUNS IN BACKGROUND
-function update () {}
+function update () {
+    /* 
+    // MOVEMENT UPDATE
+
+    // left and right rotation
+    if (aKey.isDown){
+        player.body.rotateLeft(50);
+    } else if (dKey.isDown){
+        player.body.rotateRight(50);
+    } else {
+        player.body.setZeroRotation();
+    }
+
+    // forward and backward movement
+    if (wKey.isDown){
+        player.body.thrust(200);
+    } else if (sKey.isDown){
+        player.body.reverse(200);
+    }
+    */
+}
+
+function cellularAutomataUpdate() {
+    console.log("hello");
+}
 
 // ===============================================================================
 // ========================= METHODS FOR TILE SELECTING ==========================
@@ -126,13 +184,17 @@ function inputEvent() {
     marker.x = mainLayer.getTileX(game.input.activePointer.worldX) * cellWidth;
     marker.y = mainLayer.getTileY(game.input.activePointer.worldY) * cellHeight;
 
-    console.log(marker.x + "  " + marker.y);
-
     // handle whenever the user explicitly clicks on a board cell
     if (game.input.mousePointer.isDown){
         // mark the board that something has been selected
+        selectedX = game.math.snapToFloor(game.input.activePointer.worldX, cellWidth) / cellWidth;
+        selectedY = game.math.snapToFloor(game.input.activePointer.worldY, cellHeight) / cellWidth;
 
-        map.putTile(5, mainLayer.getTileX(marker.x), mainLayer.getTileY(marker.y), mainLayer);
+        console.log(selectedX + "  " + selectedY);
+
+        board[selectedX][selectedY] = selectedCellState;
+
+        map.putTile(selectedCellState, mainLayer.getTileX(marker.x), mainLayer.getTileY(marker.y), mainLayer);
     }
 }
 
