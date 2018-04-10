@@ -57,6 +57,7 @@ $.ajax({
     async: false,
 })
 
+// Extract the globals from the config data retrieved from server
 function initGlobals(config) {
     boardHeight = gameConfig.boardState.initialHeight;
     boardWidth = gameConfig.boardState.initialWidth;
@@ -99,6 +100,9 @@ function gameCreate() {
     // init the board array
     initBoardArray();
 
+    // init the app timer
+    app.ticker.add(delta => gameLoop(delta));
+
 }
 
 // Initialize the tiles retrieved from the tilemap
@@ -140,4 +144,9 @@ function initBoardArray() {
             board[i][j] = 0;
         }
     }
+}
+
+// The constantly ticking game loop (60 times per second)
+function gameLoop(delta){
+    
 }
