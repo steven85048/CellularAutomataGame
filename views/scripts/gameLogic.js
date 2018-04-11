@@ -19,6 +19,8 @@ let Application = PIXI.Application,
     TextureCache = PIXI.utils.TextureCache,
     Rectangle = PIXI.Rectangle;
 
+var graphics = new PIXI.Graphics();
+
 // tilemap texture
 var texture;
 
@@ -72,9 +74,16 @@ function initGlobals(config) {
 
 // ========================= GAME VARIABLES ======================================
 
+// Mouse position
+var mousePosition = new Array(2);
+
 // Tile variables
 var numTiles = 5;
 var tileArray = new Array(numTiles);
+
+// Offset for the main board
+var offsetMainX = 0;
+var offsetMainY = 0;
 
 // Board Array
 var board;
@@ -99,6 +108,9 @@ function gameCreate() {
 
     // init the board array
     initBoardArray();
+
+    // init the marker for the board
+    initMarker();
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
@@ -146,7 +158,34 @@ function initBoardArray() {
     }
 }
 
+// Initialize the marker highlight that appears when the user hovers or clicks on a cell
+function initMarker() {
+    graphics.lineStyle(1, 0xFFFFFF);
+    graphics.drawRect(0 + offsetMainX,0 + offsetMainY,cellWidth, cellHeight);
+
+    app.stage.addChild(graphics);
+}
+
 // The constantly ticking game loop (60 times per second)
 function gameLoop(delta){
-    
+    // get mouse position
+    var global = app.renderer.plugins.interaction.mouse.global;
+
+    mousePosition[0] = global.x;
+    mousePosition[1] = global.y;
+
+    // get the grid coordinates
+    var gridX = Math.floor((mousePosition[0] + offsetMainX)/cellWidth);
+    var gridY = Math.floor((mousePosition[1] + offsetMainY)/cellHeight);
+
+    // draw the updated marker position
+    var markerX = gridX * cellWidth;
+    var markerY = gridY * cellHeight;
+
+    graphics.lineStyle(1, 0xFFFFFF);
+    graphics.drawRect(markerX, markerY , cellWidth, cellHeight);
+
+    app.stage.addChild(graphics);
+
+
 }
