@@ -112,9 +112,49 @@ function gameCreate() {
     // init the marker for the board
     initMarker();
 
+    // init empty tiles
+    //initEmptyTiles();
+
+    var Plane9 = new PIXI.NineSlicePlane(PIXI.Texture(texture, tileArray[0]), 15, 15, 15, 15);
+
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
 
+}
+
+// Initialize the board with the sprites
+function initEmptyTiles() {
+    // create a sprite for each tile (experimental)
+    for (var i = 0 ; i < gameConfig.gameConfig.boardCellCountWidth; i++){
+        for (var j = 0 ; j < gameConfig.gameConfig.boardCellCountHeight; j++){
+            var newTile = createNewTileSprite(i, j, 4);
+        }
+    }
+}
+
+// Create a new tile sprite
+function createNewTileSprite(x, y, tileCut){
+    // Use the tilemap cut that we want
+    var newTexture = new PIXI.Texture(texture, tileArray[tileCut]);
+    var sprite = new PIXI.Sprite.from(newTexture);
+
+    // set the location
+    sprite.x = offsetMainX + (x * cellWidth);
+    sprite.y = offsetMainY + (y * cellHeight);
+
+    // add the click listener for this boy
+    sprite.interactive = true;
+    sprite.buttonMode = true;
+    sprite.on('pointerup', tileClick);
+
+    // add that to the board
+    app.stage.addChild(sprite);
+}
+
+// Event listener whenver button is clicked
+function tileClick() {
+    var newTexture = new PIXI.Texture(texture, tileArray[2]);
+    this.texture = newTexture;
 }
 
 // Initialize the tiles retrieved from the tilemap
@@ -127,17 +167,6 @@ function initTiles() {
         // create the rectangular cuts on the tilemaps
         var rectangle = new Rectangle(i * cellWidth, 0, cellWidth, cellHeight);
         tileArray[i] = rectangle;    
-
-        // Example usage
-        /*
-        var texture = new PIXI.Texture(texture, tileArray[i]);
-        var sprite = new PIXI.Sprite.from(texture);
-
-        sprite.x = i * cellWidth;
-        sprite.y = 0;
-
-        app.stage.addChild(sprite);
-        */
     }
 
 }
@@ -168,6 +197,9 @@ function initMarker() {
 
 // The constantly ticking game loop (60 times per second)
 function gameLoop(delta){
+    // first clear the graphics
+    graphics.clear();
+
     // get mouse position
     var global = app.renderer.plugins.interaction.mouse.global;
 
