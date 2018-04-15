@@ -1,3 +1,8 @@
+// IMPORTS
+
+var PIXI = require('pixi.js')
+var $ = require('jquery');
+
 // ===============================================================================
 // ========================= GAME STATICS ========================================
 // ===============================================================================
@@ -121,6 +126,11 @@ function gameCreate() {
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
 
+}
+
+// Preprocess the rules into one large DFA
+function initRuleset() {
+    
 }
 
 // Initialize the board with the sprites
