@@ -2,6 +2,7 @@
 
 var PIXI = require('pixi.js')
 var $ = require('jquery');
+var Board = require('./tileHandling.js');
 
 // ===============================================================================
 // ========================= GAME STATICS ========================================
@@ -15,14 +16,6 @@ var boardHeight;
 var boardWidth;
 var cellHeight;
 var cellWidth;
-
-// pixiJS aliases
-let Application = PIXI.Application,
-    loader = PIXI.loader,
-    resources = PIXI.loader.resources,
-    Sprite = PIXI.Sprite,
-    TextureCache = PIXI.utils.TextureCache,
-    Rectangle = PIXI.Rectangle;
 
 var graphics = new PIXI.Graphics();
 
@@ -47,7 +40,7 @@ $.ajax({
         initGlobals(gameConfig);
 
         // Start the pixi application based on the game config
-        app = new Application({
+        app = new PIXI.Application({
             width: boardWidth,
             height: boardHeight,
             antialias: true,
@@ -82,16 +75,12 @@ function initGlobals(config) {
 // Mouse position
 var mousePosition = new Array(2);
 
-// Tile variables
-var numTiles = 5;
-var tileArray = new Array(numTiles);
+// Board object
+var board;
 
-// Offset for the main board
+// define the offset for the board
 var offsetMainX = 0;
 var offsetMainY = 0;
-
-// Board Array
-var board;
 
 // ============================ GAME LOADING FUNCTIONS ===========================
 
@@ -108,94 +97,17 @@ function loadAssets() {
 
 // Initialization of the first game state and the first draw of the map
 function gameCreate() {
-    // initialize the cuts that are used from the tile map
-    initTiles();
+    console.log("initializing Game!");
 
-    // init the board array
-    initBoardArray();
+    // Initialize board object
+    board = new Board(PIXI, app);
 
-    // init the marker for the board
+    // marker init
     initMarker();
-
-    // init empty tiles
-    initEmptyTiles();
-
-    // init ruleset dfa
-    initRuleset();
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
 
-}
-
-// Preprocess the rules into one large DFA
-function initRuleset() {
-    
-}
-
-// Initialize the board with the sprites
-function initEmptyTiles() {
-    // create a sprite for each tile (experimental)
-    for (var i = 0 ; i < gameConfig.gameConfig.boardCellCountWidth; i++){
-        for (var j = 0 ; j < gameConfig.gameConfig.boardCellCountHeight; j++){
-            var newTile = createNewTileSprite(i, j, 4);
-        }
-    }
-}
-
-// Create a new tile sprite
-function createNewTileSprite(x, y, tileCut){
-    // Use the tilemap cut that we want
-    var newTexture = new PIXI.Texture(texture, tileArray[tileCut]);
-    var sprite = new PIXI.Sprite.from(newTexture);
-
-    // set the location
-    sprite.x = offsetMainX + (x * cellWidth);
-    sprite.y = offsetMainY + (y * cellHeight);
-
-    // add the click listener for this boy
-    sprite.interactive = true;
-    sprite.buttonMode = true;
-    sprite.on('pointerup', tileClick);
-
-    // add that to the board
-    app.stage.addChild(sprite);
-}
-
-// Event listener whenver button is clicked
-function tileClick() {
-    var newTexture = new PIXI.Texture(texture, tileArray[2]);
-    this.texture = newTexture;
-}
-
-// Initialize the tiles retrieved from the tilemap
-// Store the rectangles in the image that we wish to retrieve
-function initTiles() {
-    // load the main texture sheet for the tileset.png
-    texture = resources['./assets/tileset.png'].texture;
-
-    for (var i = 0 ; i < numTiles; i++){
-        // create the rectangular cuts on the tilemaps
-        var rectangle = new Rectangle(i * cellWidth, 0, cellWidth, cellHeight);
-        tileArray[i] = rectangle;    
-    }
-
-}
-
-// Initialize the Array that will store the map with the states
-function initBoardArray() {
-    // NOTE: coordinates referenced with (height, width) or (y, x);
-    board = new Array(boardHeight);
-    for(var i = 0 ; i < boardHeight; i++){
-        board[i] = new Array(boardWidth);
-    }
-
-    // initialize the initial board state (all zero - empty)
-    for (var i = 0 ; i < boardHeight; i++){
-        for (var j = 0 ; j < boardWidth; j++){
-            board[i][j] = 0;
-        }
-    }
 }
 
 // Initialize the marker highlight that appears when the user hovers or clicks on a cell
