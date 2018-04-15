@@ -9,8 +9,8 @@ var numTiles = 5;
 var tileArray = new Array(numTiles);
 
 // Offset for the main board
-var offsetMainX = 0;
-var offsetMainY = 0;
+var offsetMainX = gameConfig.gameConfig.offsetX;
+var offsetMainY = gameConfig.gameConfig.offsetY;
 
 // Board Array
 var board;
@@ -30,6 +30,8 @@ var numCellsHeight = gameConfig.gameConfig.boardCellCountHeight;
 
 var PIXI;
 var app;
+
+// ====================================== MAIN CLASS =====================================
 
 // Create a class for the board
 var Board = function(aPIXI, aApp) {

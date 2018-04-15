@@ -1,7 +1,8 @@
 // IMPORTS
 
 var PIXI = require('pixi.js')
-var Board = require('./tileHandling.js');
+var Board = require('./Board.js');
+var Selector = require('./Selector.js');
 
 var gameConfig = require('../configs/config.js');
 
@@ -12,12 +13,7 @@ var gameConfig = require('../configs/config.js');
 // Main PIXIJS app variable
 var app;
 
-// sizes
-var boardHeight;
-var boardWidth;
-var cellHeight;
-var cellWidth;
-
+// graphics object
 var graphics = new PIXI.Graphics();
 
 // ===============================================================================
@@ -27,12 +23,10 @@ var graphics = new PIXI.Graphics();
 initialConfig();
 
 function initialConfig() {
-    initGlobals(gameConfig);
-
     // Start the pixi application based on the game config
     app = new PIXI.Application({
-        width: boardWidth,
-        height: boardHeight,
+        width: gameConfig.boardState.initialWidth,
+        height: gameConfig.boardState.initialHeight,
         antialias: true,
         transparent: false,
         resolution: 1
@@ -43,15 +37,6 @@ function initialConfig() {
 
     // after the configuration is loaded, load the content the game needs
     loadAssets();
-}
-
-// Extract the globals from the config data retrieved from server
-function initGlobals(config) {
-    boardHeight = gameConfig.boardState.initialHeight;
-    boardWidth = gameConfig.boardState.initialWidth;
-
-    cellHeight = gameConfig.gameConfig.boardCellHeight;
-    cellWidth = gameConfig.gameConfig.boardCellWidth;
 }
 
 // ===============================================================================
@@ -66,9 +51,8 @@ var mousePosition = new Array(2);
 // Board object
 var board;
 
-// define the offset for the board
-var offsetMainX = 0;
-var offsetMainY = 0;
+// Selector object (highlight cells)
+var selector;
 
 // ============================ GAME LOADING FUNCTIONS ===========================
 
@@ -90,45 +74,23 @@ function gameCreate() {
     // Initialize board object
     board = new Board(PIXI, app);
 
-    // marker init
-    initMarker();
+    // Initialize selector object
+    selector = new Selector(graphics, app);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
 
 }
 
-// Initialize the marker highlight that appears when the user hovers or clicks on a cell
-function initMarker() {
-    graphics.lineStyle(1, 0xFFFFFF);
-    graphics.drawRect(0 + offsetMainX,0 + offsetMainY,cellWidth, cellHeight);
-
-    app.stage.addChild(graphics);
-}
 
 // The constantly ticking game loop (60 times per second)
 function gameLoop(delta){
-    // first clear the graphics
-    graphics.clear();
-
     // get mouse position
     var global = app.renderer.plugins.interaction.mouse.global;
 
     mousePosition[0] = global.x;
     mousePosition[1] = global.y;
 
-    // get the grid coordinates
-    var gridX = Math.floor((mousePosition[0] + offsetMainX)/cellWidth);
-    var gridY = Math.floor((mousePosition[1] + offsetMainY)/cellHeight);
-
-    // draw the updated marker position
-    var markerX = gridX * cellWidth;
-    var markerY = gridY * cellHeight;
-
-    graphics.lineStyle(1, 0xFFFFFF);
-    graphics.drawRect(markerX, markerY , cellWidth, cellHeight);
-
-    app.stage.addChild(graphics);
-
-
+    // redraw highlight
+    selector.redrawMarker(mousePosition[0], mousePosition[1]);
 }

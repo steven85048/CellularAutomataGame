@@ -11,4 +11,7 @@ exports.gameConfig = {
     
     boardCellWidth: 32,
     boardCellHeight: 32,
+
+    offsetX: 0,
+    offsetY: 0,
 };
