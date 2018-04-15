@@ -1,8 +1,9 @@
 // IMPORTS
 
 var PIXI = require('pixi.js')
-var $ = require('jquery');
 var Board = require('./tileHandling.js');
+
+var gameConfig = require('../configs/config.js');
 
 // ===============================================================================
 // ========================= GAME STATICS ========================================
@@ -19,43 +20,30 @@ var cellWidth;
 
 var graphics = new PIXI.Graphics();
 
-// tilemap texture
-var texture;
-
 // ===============================================================================
 // ========================= CONFIG SETUP ========================================
 // ===============================================================================
 
-var gameConfig = {};
+initialConfig();
 
-// synchronous config retrieval: (jQuery)
-$.ajax({
-    url: '/getGameConfig',
-    success: function (result) {
-        // error handling
-        if (result.isOk == false) alert(result.message);
+function initialConfig() {
+    initGlobals(gameConfig);
 
-        // set the globals based on this received config
-        gameConfig = result;
-        initGlobals(gameConfig);
+    // Start the pixi application based on the game config
+    app = new PIXI.Application({
+        width: boardWidth,
+        height: boardHeight,
+        antialias: true,
+        transparent: false,
+        resolution: 1
+    });
 
-        // Start the pixi application based on the game config
-        app = new PIXI.Application({
-            width: boardWidth,
-            height: boardHeight,
-            antialias: true,
-            transparent: false,
-            resolution: 1
-        });
+    // append the canvas of app
+    document.body.appendChild(app.view);
 
-        // append the canvas of app
-        document.body.appendChild(app.view);
-
-        // after the configuration is loaded, load the content the game needs
-        loadAssets();
-    },
-    async: false,
-})
+    // after the configuration is loaded, load the content the game needs
+    loadAssets();
+}
 
 // Extract the globals from the config data retrieved from server
 function initGlobals(config) {
