@@ -123,6 +123,11 @@ function gameCreate() {
 
 }
 
+// Preprocess the rules into one large DFA
+function initRuleset() {
+    
+}
+
 // Initialize the board with the sprites
 function initEmptyTiles() {
     // create a sprite for each tile (experimental)
