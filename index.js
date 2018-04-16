@@ -10,9 +10,6 @@ app.use(morgan('dev'));
 app.use(express.static(__dirname + "/views"));
 app.engine('html', require('ejs').renderFile);
 
-// variable containing game config
-var gameConfig = require('./views/configs/config.js');
-
 // ===================================================================================================
 // ============================================== ROUTING ============================================
 // ===================================================================================================

@@ -108,7 +108,10 @@ function createNewTileSprite (x, y, tileCut) {
 // ===================================== TILE EVENT LISTENERS =====================================
 
 // Event listener whenver button is clicked
-function tileClick () { 
+function tileClick () {
+    // register that tile in the logic class
+    logic.addNewCell(this.x / cellWidth, this.y / cellWidth, 2);
+
     var newTexture = new PIXI.Texture(texture, tileArray[2]);
     this.texture = newTexture;
 }

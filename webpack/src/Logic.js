@@ -2,18 +2,21 @@
 *   Description: Handles the disjoint set basic functions as well as the matching with the dictionary DFA
 */
 
+// Dependencies
+var _ = require('underscore');
+
 // get the config
 var gameConfig = require('../configs/config.js');
 
-var numCellsWidth = gameConfig.gameConfig.boardCellCountWidth;
-var numCellsHeight = gameConfig.gameConfig.boardCellCountHeight;
+var boardWidth = gameConfig.gameConfig.boardCellCountWidth;
+var boardHeight = gameConfig.gameConfig.boardCellCountHeight;
 
 // 2D container to hold the board state
 var board;
 
 // Disjoint set global structs
 var disjointSets = [];
-var lookup; 
+var lookup = {}; 
 
 // ==================================== CLASS SETUP =========================================
 
@@ -48,7 +51,7 @@ function initBoardArray () {
 Logic.prototype.addNewCell = function(x, y, color){
     // first set the array object
     board[x][y] = color;
-    var point = [x,y];
+    var point = [x, y, color];
 
     // get the cells in four directions (left, up, right, down)
     var dirs = getCardinalDirectionCells(x, y);
@@ -56,14 +59,29 @@ Logic.prototype.addNewCell = function(x, y, color){
     // get all the relevant disjoint sets
     var cardinalSets = [];
 
+    var dirHash = {};
     var changed = false;
     for (var i = 0 ; i < dirs.length; i++){
         // add all the disjoint sets that are in the cardinal direction
         if (dirs[i] != 0){
             changed = true;
 
-            var currSet = lookup[dirs[i][0], dirs[i][1]];
-            cardinalSets.push(currSet);
+            var currSet = lookup[dirs[i]];
+
+            // lookup the set and push to the set (if not added yet)
+            if (!dirHash[currSet.bounds[0]]){
+
+                cardinalSets.push(currSet);
+                dirHash[currSet.bounds[0]] = true;
+
+                // also remove this disjoint set from the running disjointSets
+                for (var j = 0 ; j < disjointSets.length; j++){
+                    if (_.isEqual(disjointSets[j], currSet)){
+                        disjointSets.splice(j, 1);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -79,11 +97,14 @@ Logic.prototype.addNewCell = function(x, y, color){
         // then add it to set as well as set lookup
         disjointSets.push(newDisjointSet);
         lookup[point] = newDisjointSet;
+
     } else { // otherwise we need to union all of the sets
 
         // bound maximization problem: want to find the largest rectangle after unioning all sets
         var upperLeft = point;
         var bottomRight = point;
+
+        lookup[point] = newDisjointSet;
 
         // loop through all four or less disjoint sets
         for (var i = 0 ; i < cardinalSets.length; i++){
@@ -91,9 +112,30 @@ Logic.prototype.addNewCell = function(x, y, color){
             var currUpperLeft = cardinalSets[i].bounds[0];
             var currBottomRight = [currUpperLeft[0] + cardinalSets[i].bounds[1], currUpperLeft[1] + cardinalSets[i].bounds[2]];
 
+            // update the bounds
+            upperLeft = [Math.min(currUpperLeft[0], upperLeft[0]), Math.min(currUpperLeft[1], upperLeft[1])];
+            bottomRight = [Math.max(currBottomRight[0], bottomRight[0]), Math.max(currBottomRight[1], bottomRight[1])];
 
+            // add all the members of this disjoint set to the new one as well update that point's lookup
+            for (var j = 0 ; j < cardinalSets[i].members.length; j++){
+                var currPoint = cardinalSets[i].members[j];
+
+                // add member
+                newDisjointSet.members.push(currPoint);
+
+                // update lookup 
+                lookup[currPoint] = newDisjointSet;
+            }
         }
 
+        // set the newDisjointSet parameters
+        newDisjointSet.bounds = [upperLeft, bottomRight[0] - upperLeft[0], bottomRight[1] - upperLeft[1]];        
+
+        // add that newDisjointSet to the running disjoint set list
+        disjointSets.push(newDisjointSet);
+
+        // debugging
+        console.log("New corner: " + newDisjointSet.bounds[0][0] + "   " + newDisjointSet.bounds[0][1] + "\n");
     }
 
 }
@@ -103,28 +145,24 @@ function getCardinalDirectionCells (x, y) {
     // left, up, right, down
     var dirs = new Array(4);
 
+    // initialize with 0
+    for (var i = 0 ; i < dirs.length; i++) 
+        dirs[i] = 0;
+
     // left
-    if (y == 0)
-        dirs[0] = 0;
-    else
+    if (y != 0 && board[x][y-1] != 0)
         dirs[0] = [x, y-1, board[x][y-1]];
 
     // up
-    if (x == 0)
-        dirs[1] = 0;
-    else
+    if (x != 0 && board[x-1][y] != 0)
         dirs[1] = [x-1, y, board[x-1][y]];
 
     // right
-    if (y == boardWidth - 1)
-        dirs[2] = 0;
-    else
+    if (y != (boardWidth - 1) && board[x][y+1] != 0)
         dirs[2] = [x, y+1, board[x][y+1]];
 
     // down
-    if (x == boardHeight == 1)
-        dirs[3] = 0;
-    else
+    if (x != (boardHeight - 1) && board[x+1][y] != 0)
         dirs[3] = [x+1, y, board[x + 1][y]];
 
     return dirs;
