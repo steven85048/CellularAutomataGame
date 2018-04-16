@@ -82,7 +82,6 @@ function gameCreate() {
 
 }
 
-
 // The constantly ticking game loop (60 times per second)
 function gameLoop(delta){
     // get mouse position

@@ -1,19 +1,22 @@
+/*
+* Description: Main handler file for the board the board logic. Performs actios for the 
+* (a) Tiling of the board
+* (b) Coordinating of the disjoint set addition
+*/
+
 // ========================================================================================
 // ======================================== GLOBALS =======================================
 // ========================================================================================
 
 var gameConfig = require('../configs/config.js');
+var Logic = require('./Logic.js');
 
-// Tile variables
+// Tile variables (for tilemap)
 var numTiles = 5;
 var tileArray = new Array(numTiles);
 
-// Offset for the main board
-var offsetMainX = gameConfig.gameConfig.offsetX;
-var offsetMainY = gameConfig.gameConfig.offsetY;
-
-// Board Array
-var board;
+// Game logic object
+var logic;
 
 // Global tilemap texture
 var texture;
@@ -28,6 +31,10 @@ var cellWidth = gameConfig.gameConfig.boardCellWidth;
 var numCellsWidth = gameConfig.gameConfig.boardCellCountWidth;
 var numCellsHeight = gameConfig.gameConfig.boardCellCountHeight;
 
+var offsetMainX = gameConfig.gameConfig.offsetX;
+var offsetMainY = gameConfig.gameConfig.offsetY;
+
+// PIXI and app vars
 var PIXI;
 var app;
 
@@ -39,11 +46,11 @@ var Board = function(aPIXI, aApp) {
     PIXI = aPIXI;
     app = aApp;
 
+    // Initialize the object with the game logic
+    logic = new Logic();
+
     // initialize the cuts that are used from the tile map
     initTiles();
-
-    // init the board array
-    initBoardArray();
 
     // init empty tiles
     initEmptyTiles();
@@ -76,21 +83,6 @@ function initTiles () {
     }
 }
 
-// Initialize the Array that will store the map with the states
-function initBoardArray () {
-    // NOTE: coordinates referenced with (height, width) or (y, x);
-    board = new Array(boardHeight);
-    for(var i = 0 ; i < boardHeight; i++){
-        board[i] = new Array(boardWidth);
-    }
-
-    // initialize the initial board state (all zero - empty)
-    for (var i = 0 ; i < boardHeight; i++){
-        for (var j = 0 ; j < boardWidth; j++){
-            board[i][j] = 0;
-        }
-    }
-}
 
 // ======================================== TILE CRUD ======================================
 
