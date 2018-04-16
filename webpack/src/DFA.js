@@ -16,8 +16,6 @@ var startState;
 // ============================================ CLASS SETUP ================================
 
 var DFA = function() {
-    console.log("Constructor DFA");
-
     // preprocessing
     loadDFAFromRuleset();
 }
@@ -26,17 +24,41 @@ module.exports = DFA;
 
 // access the ruleset and load the DFA
 function loadDFAFromRuleset() {
+    // get the ruleset strings
+    var rulesetStrings = generateStateTransition(ruleSet);
+    console.log(rulesetStrings);
+
+    // then from those strings generate the DFA
+    var combDFA = generateDFA(rulesetStrings);
+
+} 
+
+// using ruleset strings, generate the DFA:
+function generateDFA(rulesetStrings){
     // first create the start node
     startState = 
     {
         Accepting: false,
-        Transition: null,
+        Transition: {},
         Generating: null,
     };
 
-    var rulesetStrings = generateStateTransition(ruleSet);
-    console.log(rulesetStrings);
-} 
+    // loop through all rules and add to DFA
+    for (var i = 0 ; i < rulesetStrings.length; i++){
+        var rule = rulesetStrings[i];
+        startState = addRuleToDFA(rule, startState);
+    }
+
+    return startState;
+}
+
+// add a rule to the current DFA
+function addRuleToDFA(rule, startState){
+    // loop through all the rules
+    for (var i = 0 ; i < rule.length; i++){
+
+    }
+}
 
 // convert the whole ruleset into an array of input strings
 function generateStateTransition(ruleSet) {
@@ -46,7 +68,7 @@ function generateStateTransition(ruleSet) {
     for (var i = 0 ; i < ruleSet.rules.length; i++){
         var currRule = ruleSet.rules[i];
         var inputString = generateInputString(currRule);
-        rulesetStrings(inputString);
+        rulesetStrings.push(inputString);
     }
 
     return rulesetStrings;
@@ -54,7 +76,6 @@ function generateStateTransition(ruleSet) {
 
 // convert a rule into an input string
 function generateInputString(currRule){
-    console.log("generating");
 
     // put all the points into a hash
     var pointHash = {};
@@ -70,8 +91,6 @@ function generateInputString(currRule){
 
     // loop through the rectangle
     for (var j = 0 ; j < width; j++){
-        console.log("rectangle looping");
-
         // set the direction to down
         currChar = "D";
 
