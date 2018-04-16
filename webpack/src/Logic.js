@@ -7,6 +7,7 @@ var _ = require('underscore');
 
 // get the config
 var gameConfig = require('../configs/config.js');
+var DFA = require('./DFA.js');
 
 var boardWidth = gameConfig.gameConfig.boardCellCountWidth;
 var boardHeight = gameConfig.gameConfig.boardCellCountHeight;
@@ -23,6 +24,9 @@ var lookup = {};
 var Logic = function() {
     // initialize the board array (all empty at first)
     initBoardArray();
+
+    // initialize the DFA
+    var dfa = new DFA();
 }
 
 module.exports = Logic;
@@ -31,15 +35,15 @@ module.exports = Logic;
 
 // Initialize the Array that will store the map with the states
 function initBoardArray () {
-    // NOTE: coordinates referenced with (height, width) or (y, x);
-    board = new Array(boardHeight);
-    for(var i = 0 ; i < boardHeight; i++){
-        board[i] = new Array(boardWidth);
+    // NOTE: coordinates referenced with (width, height) 
+    board = new Array(boardWidth);
+    for(var i = 0 ; i < boardWidth; i++){
+        board[i] = new Array(boardHeight);
     }
 
     // initialize the initial board state (all zero - empty)
-    for (var i = 0 ; i < boardHeight; i++){
-        for (var j = 0 ; j < boardWidth; j++){
+    for (var i = 0 ; i < boardWidth; i++){
+        for (var j = 0 ; j < boardHeight; j++){
             board[i][j] = 0;
         }
     }
