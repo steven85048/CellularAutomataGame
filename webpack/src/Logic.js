@@ -7,7 +7,10 @@ var _ = require('underscore');
 
 // get the config
 var gameConfig = require('../configs/config.js');
+
+// DFA and object
 var DFA = require('./DFA.js');
+var dfa;
 
 var boardWidth = gameConfig.gameConfig.boardCellCountWidth;
 var boardHeight = gameConfig.gameConfig.boardCellCountHeight;
@@ -15,7 +18,14 @@ var boardHeight = gameConfig.gameConfig.boardCellCountHeight;
 // 2D container to hold the board state
 var board;
 
-// Disjoint set global structs
+//Disjoint set global structs
+/*
+    Note: the disjointSet struct is as such:
+    {
+        bounds: [[x, y, color], width, height],
+        members: [[x,y,color]]
+    }
+*/
 var disjointSets = [];
 var lookup = {}; 
 
@@ -26,7 +36,7 @@ var Logic = function() {
     initBoardArray();
 
     // initialize the DFA
-    var dfa = new DFA();
+    dfa = new DFA();
 }
 
 module.exports = Logic;
@@ -170,4 +180,20 @@ function getCardinalDirectionCells (x, y) {
         dirs[3] = [x+1, y, board[x + 1][y]];
 
     return dirs;
+}
+
+// ======================================= DFA PASSAGE ==============================
+
+// pass the disjoint sets through the DFA
+Logic.prototype.disjointSetMatch = function() {
+    // loop through the disjoint sets
+    for (var i = 0 ; i < disjointSets.length; i++){
+        var currSet = disjointSets[i];
+        disjointSetPass(currSet);
+    }
+}
+
+// pass that disjoint set through the dfa
+function disjointSetPass(disjointSet) {
+    console.log(dfa.passInput(disjointSet));
 }

@@ -22,6 +22,8 @@ var DFA = function() {
 
 module.exports = DFA;
 
+// =========================================== DFA INITIALIZATION ============================
+
 // access the ruleset and load the DFA
 function loadDFAFromRuleset() {
     // get the ruleset strings
@@ -38,26 +40,47 @@ function generateDFA(rulesetStrings){
     // first create the start node
     startState = 
     {
-        Accepting: false,
-        Transition: {},
-        Generating: null,
+        accepting: false,
+        transition: {},
+        generating: null,
     };
 
     // loop through all rules and add to DFA
     for (var i = 0 ; i < rulesetStrings.length; i++){
         var rule = rulesetStrings[i];
-        startState = addRuleToDFA(rule, startState);
+        addRuleToDFA(rule, startState);
     }
+
+    console.log(startState);
 
     return startState;
 }
 
 // add a rule to the current DFA
 function addRuleToDFA(rule, startState){
+    var pointer = startState;
+
     // loop through all the rules
     for (var i = 0 ; i < rule.length; i++){
+        var inputCharacter = rule[i];
 
+        // keep traversing if the transition already exists
+        if (pointer.transition[inputCharacter]){
+            pointer = pointer.transition[inputCharacter];
+        } else { // make a new transition
+            var newState = 
+            {
+                accepting: false,
+                transition: {},
+                generating: null,
+            };
+
+            pointer.transition[inputCharacter] = newState;
+            pointer = newState;
+        }
     }
+
+    pointer.accepting = true;
 }
 
 // convert the whole ruleset into an array of input strings
@@ -67,7 +90,7 @@ function generateStateTransition(ruleSet) {
     // loop through each rule, get the string for each, and append to total strings
     for (var i = 0 ; i < ruleSet.rules.length; i++){
         var currRule = ruleSet.rules[i];
-        var inputString = generateInputString(currRule);
+        var inputString = generateInputString(currRule.points, 0, 0, currRule.width, currRule.height);
         rulesetStrings.push(inputString);
     }
 
@@ -75,26 +98,22 @@ function generateStateTransition(ruleSet) {
 }
 
 // convert a rule into an input string
-function generateInputString(currRule){
+function generateInputString(points, xCorner, yCorner, width, height){
 
     // put all the points into a hash
     var pointHash = {};
-    for (var j = 0 ; j < currRule.points.length; j++)
-        pointHash[[currRule.points[j][0], currRule.points[j][1]]] = currRule.points[j][2];
-    
-    // generate the input string for this rule
-    var width = currRule.width;
-    var height = currRule.height;
+    for (var j = 0 ; j < points.length; j++)
+        pointHash[[points[j][0], points[j][1]]] = points[j][2];
     
     var inputString = [];
     var currChar;
 
     // loop through the rectangle
-    for (var j = 0 ; j < width; j++){
+    for (var j = xCorner ; j < xCorner + width; j++){
         // set the direction to down
-        currChar = "D";
+        currChar = "R";
 
-        for (var k = 0 ; k < height; k++){
+        for (var k = yCorner ; k < yCorner + height; k++){
             var inputCharacter;
 
             // check three cases (a) if the point is filled (b) if a point neighbor is filled (c) if the point is zero
@@ -107,7 +126,7 @@ function generateInputString(currRule){
             }
 
             // set the direction to right
-            currChar = "R";
+            currChar = "D";
 
             // append that character to the string
             inputString.push(inputCharacter);
@@ -115,4 +134,45 @@ function generateInputString(currRule){
     }
 
     return inputString;
+}
+
+// ======================================== PASSING INPUT STRING ====================================
+
+// pass the disjoint set through the dfa
+DFA.prototype.passInput = function(disjointSet) {
+    // extract all the parameters for rule selection
+    var points = disjointSet.members;
+    var xCorner = disjointSet.bounds[0][0];
+    var yCorner = disjointSet.bounds[0][1];
+    var width = disjointSet.bounds[1];
+    var height = disjointSet.bounds[2];
+
+    // then create the input string
+    var inputString = generateInputString(points, xCorner, yCorner, width + 1, height + 1);
+
+    // then pass that input string through the dfa
+    return determineAccept(inputString);
+}
+
+// passes the input string through the dfa
+function determineAccept(inputString) {
+    var pointer = startState;
+
+    // loop through the input
+    for (var i = 0 ; i < inputString.length; i++){
+        var inputCharacter = inputString[i];
+        
+        // keep looping until accept or not
+        if (pointer.transition[inputCharacter]){
+            pointer = pointer.transition[inputCharacter]; 
+        } else {
+            return false;
+        }
+    }
+
+    // if ending in accept state or not
+    if (pointer.accepting)
+        return true;
+    else
+        return false;
 }
