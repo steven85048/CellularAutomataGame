@@ -111,7 +111,7 @@ function createNewTileSprite (x, y, tileCut) {
 function tileClick () {
     // register that tile in the logic class
     logic.addNewCell(this.x / cellWidth, this.y / cellWidth, 1);
-    logic.disjointSetMatch();
+    logic.disjointSetMatchRecent();
 
     var newTexture = new PIXI.Texture(texture, tileArray[1]);
     this.texture = newTexture;

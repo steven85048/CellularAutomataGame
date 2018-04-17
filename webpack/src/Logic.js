@@ -29,6 +29,9 @@ var board;
 var disjointSets = [];
 var lookup = {}; 
 
+// keep track of most recent disjoint set added
+var mostRecent;
+
 // ==================================== CLASS SETUP =========================================
 
 var Logic = function() {
@@ -106,19 +109,12 @@ Logic.prototype.addNewCell = function(x, y, color){
         members: [point],
     }
 
-    // easiest case: if all four cells in cardinal direction are empty, then create new disjoint set
-    if (!changed){
-        // then add it to set as well as set lookup
-        disjointSets.push(newDisjointSet);
-        lookup[point] = newDisjointSet;
-
-    } else { // otherwise we need to union all of the sets
+    // only do union if there are neighbors to union
+    if (changed) { // otherwise we need to union all of the sets
 
         // bound maximization problem: want to find the largest rectangle after unioning all sets
         var upperLeft = point;
         var bottomRight = point;
-
-        lookup[point] = newDisjointSet;
 
         // loop through all four or less disjoint sets
         for (var i = 0 ; i < cardinalSets.length; i++){
@@ -145,12 +141,14 @@ Logic.prototype.addNewCell = function(x, y, color){
         // set the newDisjointSet parameters
         newDisjointSet.bounds = [upperLeft, bottomRight[0] - upperLeft[0], bottomRight[1] - upperLeft[1]];        
 
-        // add that newDisjointSet to the running disjoint set list
-        disjointSets.push(newDisjointSet);
-
         // debugging
         console.log("New corner: " + newDisjointSet.bounds[0][0] + "   " + newDisjointSet.bounds[0][1] + "\n");
     }
+
+    // add the disjoint set, add to lookup, then set most recent
+    disjointSets.push(newDisjointSet);
+    lookup[point] = newDisjointSet;
+    mostRecent = newDisjointSet;
 
 }
 
@@ -184,13 +182,19 @@ function getCardinalDirectionCells (x, y) {
 
 // ======================================= DFA PASSAGE ==============================
 
-// pass the disjoint sets through the DFA
-Logic.prototype.disjointSetMatch = function() {
+// pass the disjoint sets (all) through the DFA
+Logic.prototype.disjointSetMatchAll = function() {
     // loop through the disjoint sets
     for (var i = 0 ; i < disjointSets.length; i++){
         var currSet = disjointSets[i];
         disjointSetPass(currSet);
     }
+}
+
+// pass a single disjoint set through the DFA
+Logic.prototype.disjointSetMatchRecent = function() {
+    console.log(dfa.passInput(mostRecent));
+
 }
 
 // pass that disjoint set through the dfa
