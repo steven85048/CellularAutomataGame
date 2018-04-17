@@ -83,7 +83,7 @@ Logic.prototype.addNewCell = function(x, y, color){
         if (dirs[i] != 0){
             changed = true;
 
-            var currSet = lookup[dirs[i]];
+            var currSet = lookup[[dirs[i][0], dirs[i][1]]];
 
             // lookup the set and push to the set (if not added yet)
             if (!dirHash[currSet.bounds[0]]){
@@ -134,7 +134,7 @@ Logic.prototype.addNewCell = function(x, y, color){
                 newDisjointSet.members.push(currPoint);
 
                 // update lookup 
-                lookup[currPoint] = newDisjointSet;
+                lookup[[currPoint[0], currPoint[1]]] = newDisjointSet;
             }
         }
 
@@ -142,12 +142,12 @@ Logic.prototype.addNewCell = function(x, y, color){
         newDisjointSet.bounds = [upperLeft, bottomRight[0] - upperLeft[0], bottomRight[1] - upperLeft[1]];        
 
         // debugging
-        console.log("New corner: " + newDisjointSet.bounds[0][0] + "   " + newDisjointSet.bounds[0][1] + "\n");
+        //console.log("New corner: " + newDisjointSet.bounds[0][0] + "   " + newDisjointSet.bounds[0][1] + "\n");
     }
 
     // add the disjoint set, add to lookup, then set most recent
     disjointSets.push(newDisjointSet);
-    lookup[point] = newDisjointSet;
+    lookup[[point[0], point[1]]] = newDisjointSet;
     mostRecent = newDisjointSet;
 
 }
@@ -180,6 +180,14 @@ function getCardinalDirectionCells (x, y) {
     return dirs;
 }
 
+// =================================== GETTER SETTER ================================
+
+// returns the corner for a (x,y) coordinate position
+Logic.prototype.lookupCorner = function(x, y){
+    var dSet = lookup[[x,y]];
+    return dSet.bounds[0];
+}
+
 // ======================================= DFA PASSAGE ==============================
 
 // pass the disjoint sets (all) through the DFA
@@ -187,17 +195,16 @@ Logic.prototype.disjointSetMatchAll = function() {
     // loop through the disjoint sets
     for (var i = 0 ; i < disjointSets.length; i++){
         var currSet = disjointSets[i];
-        disjointSetPass(currSet);
+        dfa.passInput(currSet);
     }
 }
 
 // pass a single disjoint set through the DFA
 Logic.prototype.disjointSetMatchRecent = function() {
-    console.log(dfa.passInput(mostRecent));
-
+    return dfa.passInput(mostRecent);
 }
 
 // pass that disjoint set through the dfa
 function disjointSetPass(disjointSet) {
-    console.log(dfa.passInput(disjointSet));
+   return dfa.passInput(disjointSet);
 }

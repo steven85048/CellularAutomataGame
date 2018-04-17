@@ -48,7 +48,7 @@ function generateDFA(rulesetStrings){
     // loop through all rules and add to DFA
     for (var i = 0 ; i < rulesetStrings.length; i++){
         var rule = rulesetStrings[i];
-        addRuleToDFA(rule, startState);
+        addRuleToDFA(rule, startState, i);
     }
 
     console.log(startState);
@@ -57,7 +57,7 @@ function generateDFA(rulesetStrings){
 }
 
 // add a rule to the current DFA
-function addRuleToDFA(rule, startState){
+function addRuleToDFA(rule, startState, index){
     var pointer = startState;
 
     // loop through all the rules
@@ -80,7 +80,10 @@ function addRuleToDFA(rule, startState){
         }
     }
 
+    // set the last state as accepting and append the generating rules
     pointer.accepting = true;
+    pointer.generating = ruleSet.rules[index].generating;
+    
 }
 
 // convert the whole ruleset into an array of input strings
@@ -172,7 +175,7 @@ function determineAccept(inputString) {
 
     // if ending in accept state or not
     if (pointer.accepting)
-        return true;
+        return pointer.generating;
     else
         return false;
 }

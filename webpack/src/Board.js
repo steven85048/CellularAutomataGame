@@ -38,6 +38,12 @@ var offsetMainY = gameConfig.gameConfig.offsetY;
 var PIXI;
 var app;
 
+// Sprite array
+var spriteArray;
+
+// Current color of the user
+var currColor = 1;
+
 // ====================================== MAIN CLASS =====================================
 
 // Create a class for the board
@@ -62,10 +68,17 @@ module.exports = Board;
 
 // Initialize the board with the sprites
 function initEmptyTiles () {
+    // first initialize the sprite container
+    spriteArray = new Array(numCellsWidth);
+
+    for (var i = 0 ; i < numCellsWidth; i++)
+        spriteArray[i] = new Array(numCellsHeight);
+
     // create a sprite for each tile (experimental)
     for (var i = 0 ; i < numCellsWidth; i++){
         for (var j = 0 ; j < numCellsHeight; j++){
             var newTile = createNewTileSprite(i, j, 4);
+            spriteArray[i][j] = newTile;
         }
     }
 }
@@ -103,16 +116,41 @@ function createNewTileSprite (x, y, tileCut) {
 
     // add that to the board
     app.stage.addChild(sprite);
+
+    return sprite;
+}
+
+// Change a tile color
+function addTile(x, y, color) {
+    // change the texture of the sprite
+    var newTexture = new PIXI.Texture(texture, tileArray[color]);
+    spriteArray[x][y].texture = newTexture;
+
+    // then add that tile in the logic class
+    logic.addNewCell(x, y, color);
+    var match = logic.disjointSetMatchRecent();
+
+    if (match != false){
+        var corner = logic.lookupCorner(x, y);
+        generateAdditionalCells(match, corner[0], corner[1]);
+    }
+}
+
+// Generate additional cells based on the rules
+function generateAdditionalCells(match, x, y){
+    for (var i = 0 ; i < match.length; i++){
+        addTile(x + match[i][0], y + match[i][1], match[i][2]);
+    }
 }
 
 // ===================================== TILE EVENT LISTENERS =====================================
 
 // Event listener whenver button is clicked
 function tileClick () {
-    // register that tile in the logic class
-    logic.addNewCell(this.x / cellWidth, this.y / cellWidth, 1);
-    logic.disjointSetMatchRecent();
+    // extract the x and y grid coordinates
+    var xCoord = this.x / cellWidth
+    var yCoord =  this.y / cellHeight;
 
-    var newTexture = new PIXI.Texture(texture, tileArray[1]);
-    this.texture = newTexture;
+    // add the tile
+    addTile(xCoord, yCoord, currColor);
 }
