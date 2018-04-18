@@ -96,12 +96,31 @@ Logic.prototype.deleteCell = function(x, y) {
     spliceDisjointSet(disjointSet);
 }
 
+// Update cell color (from nonzero to another color (not zero))
+Logic.prototype.updateCell = function(x, y, color){
+    // first lookup the disjoint set
+    var disjointSet = lookup[[x,y]];
+
+    // then find the point and update the color
+    for (var i = 0 ; i < disjointSet.members; i++){
+        // find the thing and update color
+        if (disjointSet.members[i][0] == x && disjointSet.members[i][1] == y){
+            disjointSet.members[i][2] = color;
+            break;
+        }
+    }
+}
+
 // Logic after new cell has been inputted to board
 Logic.prototype.addNewCell = function(x, y, color){
     // if the x and y already exist then just delete
-    if (lookup[[x, y]]){
+    if (lookup[[x, y]] && color == 3){
         this.deleteCell(x, y);
         return 1;
+    }
+    // if the cell needs to be different 
+    else if (lookup[[x,y]] && board[x][y] != color){
+        this.updateCell(x,y,color);
     }
 
     // first set the array object
@@ -183,6 +202,7 @@ Logic.prototype.addNewCell = function(x, y, color){
     lookup[[point[0], point[1]]] = newDisjointSet;
     mostRecent = newDisjointSet;
 
+    // if a normal add return 0
     return 0;
 }
 

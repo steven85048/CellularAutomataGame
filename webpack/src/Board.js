@@ -160,3 +160,8 @@ function tileClick () {
     // add the tile
     addTile(xCoord, yCoord, currColor);
 }
+
+// Change the color of the tile
+Board.prototype.changeColor = function (color) {
+    currColor = color;
+}

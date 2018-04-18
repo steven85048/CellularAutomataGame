@@ -3,7 +3,6 @@
 var PIXI = require('pixi.js')
 var Board = require('./Board.js');
 var Selector = require('./Selector.js');
-var RulesetDisplay = require('./RulesetDisplay.js');
 
 var gameConfig = require('../configs/config.js');
 
@@ -33,16 +32,11 @@ function initialConfig() {
         resolution: 1,
     });
 
-    var app2 = new PIXI.Application({
-        width: 300,
-        height: 960,
-        transparent: false,
-        resolution: 1
-    })
-
     // append the canvas of app
     document.body.appendChild(app.view);
-    document.body.appendChild(app2.view);
+
+    // append a keydown event
+    document.addEventListener('keydown', keyDownHandler)
 
     // after the configuration is loaded, load the content the game needs
     loadAssets();
@@ -63,9 +57,6 @@ var board;
 // Selector object (highlight cells)
 var selector;
 
-// Ruleset display object
-var rulesetDisplay;
-
 // ============================ GAME LOADING FUNCTIONS ===========================
 
 // load the content that the application needs to run
@@ -81,7 +72,7 @@ function loadAssets() {
 
 // Initialization of the first game state and the first draw of the map
 function gameCreate() {
-    console.log("initializing Game!");
+    console.log("initializing Game");
 
     // Initialize board object
     board = new Board(PIXI, app);
@@ -89,11 +80,19 @@ function gameCreate() {
     // Initialize selector object
     selector = new Selector(graphics, app);
 
-    // Initialize the ruleset display (right column)
-    //rulesetDisplay = new RulesetDisplay(PIXI, app);
-
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
+
+}
+
+// Handle keyboard click
+function keyDownHandler(key) {
+    // ignore if key is not in 0-9 range
+    if (key.keyCode < 48 || key.keyCode > 57)
+        return;
+
+    // notify the board that the tile has changed
+    board.changeColor(key.keyCode - 48);
 
 }
 
