@@ -19,9 +19,4 @@ app.get('/', (req, res) => {
     res.render('pages/start.html');
 });
 
-// for retrieving game config
-app.get('/getGameConfig', (req, res) => {
-    res.send(gameConfig);
-});
-
 app.listen(8000 || process.env.PORT, () => console.log("App listening on port 8000"));

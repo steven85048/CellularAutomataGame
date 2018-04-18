@@ -28,8 +28,7 @@ module.exports = DFA;
 function loadDFAFromRuleset() {
     // get the ruleset strings
     var rulesetStrings = generateStateTransition(ruleSet);
-    console.log(rulesetStrings);
-
+    
     // then from those strings generate the DFA
     var combDFA = generateDFA(rulesetStrings);
 
@@ -50,8 +49,6 @@ function generateDFA(rulesetStrings){
         var rule = rulesetStrings[i];
         addRuleToDFA(rule, startState, i);
     }
-
-    console.log(startState);
 
     return startState;
 }

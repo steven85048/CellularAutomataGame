@@ -122,13 +122,17 @@ function createNewTileSprite (x, y, tileCut) {
 
 // Change a tile color
 function addTile(x, y, color) {
+    // then add that tile in the logic class
+    var ret = logic.addNewCell(x, y, color);
+    var match = logic.disjointSetMatchRecent();
+
+    // if same already filled, delete
+    if (ret == 1)
+        color = 4;
+
     // change the texture of the sprite
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
-    spriteArray[x][y].texture = newTexture;
-
-    // then add that tile in the logic class
-    logic.addNewCell(x, y, color);
-    var match = logic.disjointSetMatchRecent();
+    spriteArray[x][y].texture = newTexture;    
 
     if (match != false){
         var corner = logic.lookupCorner(x, y);

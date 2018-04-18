@@ -64,8 +64,48 @@ function initBoardArray () {
 
 // ================================== DISJOINT SET CRUD ======================================
 
+// Logic after a cell has been changed from a nonzero color to zero [Bad runtime]
+Logic.prototype.deleteCell = function(x, y) {
+    console.log("deleting");
+
+    // set the board color as empty
+    board[x][y] = 0;
+
+    // first lookup the disjoint set
+    var disjointSet = lookup[[x,y]];
+
+    // check if nonzero
+    if (disjointSet == null)
+        return;
+
+    // remove that disjoint set
+    spliceDisjointSet(disjointSet);
+    
+    // readd each point except for the deleted point
+    var points = disjointSet.members;
+
+    // reset the lookup for these points
+    for (var i = 0 ; i < points.length; i++)
+        delete lookup[[points[i][0], points[i][1]]];
+
+    console.log(lookup);
+
+    // then readd all of them (excluding the previous point)
+    for (var i = 0 ; i < points.length; i++){
+        if (points[i][0] != x && points[i][1] == y)
+            this.addNewCell(points[0], points[1], points[2]);
+    }
+
+}
+
 // Logic after new cell has been inputted to board
 Logic.prototype.addNewCell = function(x, y, color){
+    // if the x and y already exist then just delete
+    if (lookup[[x, y]]){
+        this.deleteCell(x, y);
+        return 1;
+    }
+
     // first set the array object
     board[x][y] = color;
     var point = [x, y, color];
@@ -91,13 +131,8 @@ Logic.prototype.addNewCell = function(x, y, color){
                 cardinalSets.push(currSet);
                 dirHash[currSet.bounds[0]] = true;
 
-                // also remove this disjoint set from the running disjointSets
-                for (var j = 0 ; j < disjointSets.length; j++){
-                    if (_.isEqual(disjointSets[j], currSet)){
-                        disjointSets.splice(j, 1);
-                        break;
-                    }
-                }
+                // remove the neighboring disjoint set
+                spliceDisjointSet(currSet);
             }
         }
     }
@@ -150,7 +185,20 @@ Logic.prototype.addNewCell = function(x, y, color){
     lookup[[point[0], point[1]]] = newDisjointSet;
     mostRecent = newDisjointSet;
 
+    return 0;
 }
+
+// remove the disjoint set from the set of all sets if equal 
+function spliceDisjointSet(disjointSet){
+    // also remove this disjoint set from the running disjointSets
+    for (var j = 0 ; j < disjointSets.length; j++){
+        if (_.isEqual(disjointSets[j], disjointSet)){
+            disjointSets.splice(j, 1);
+            break;
+        }
+    }
+}
+
 
 // get the cells in four directions
 function getCardinalDirectionCells (x, y) {

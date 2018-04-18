@@ -1,13 +1,13 @@
 var exports = module.exports = {};
 
 exports.boardState = {
-    initialWidth: 1500,
-    initialHeight: 1200,
+    initialWidth: 1280,
+    initialHeight: 960,
 };
 
 exports.gameConfig = {
-    boardCellCountWidth: 200,
-    boardCellCountHeight: 200,
+    boardCellCountWidth: 40,
+    boardCellCountHeight: 30,
     
     boardCellWidth: 32,
     boardCellHeight: 32,

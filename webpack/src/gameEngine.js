@@ -3,6 +3,7 @@
 var PIXI = require('pixi.js')
 var Board = require('./Board.js');
 var Selector = require('./Selector.js');
+var RulesetDisplay = require('./RulesetDisplay.js');
 
 var gameConfig = require('../configs/config.js');
 
@@ -29,11 +30,19 @@ function initialConfig() {
         height: gameConfig.boardState.initialHeight,
         antialias: true,
         transparent: false,
-        resolution: 1
+        resolution: 1,
     });
+
+    var app2 = new PIXI.Application({
+        width: 300,
+        height: 960,
+        transparent: false,
+        resolution: 1
+    })
 
     // append the canvas of app
     document.body.appendChild(app.view);
+    document.body.appendChild(app2.view);
 
     // after the configuration is loaded, load the content the game needs
     loadAssets();
@@ -53,6 +62,9 @@ var board;
 
 // Selector object (highlight cells)
 var selector;
+
+// Ruleset display object
+var rulesetDisplay;
 
 // ============================ GAME LOADING FUNCTIONS ===========================
 
@@ -76,6 +88,9 @@ function gameCreate() {
 
     // Initialize selector object
     selector = new Selector(graphics, app);
+
+    // Initialize the ruleset display (right column)
+    //rulesetDisplay = new RulesetDisplay(PIXI, app);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
