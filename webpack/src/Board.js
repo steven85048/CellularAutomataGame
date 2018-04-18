@@ -14,6 +14,7 @@ var Logic = require('./Logic.js');
 // Tile variables (for tilemap)
 var numTiles = 5;
 var tileArray = new Array(numTiles);
+var emptyTile = 2;
 
 // Game logic object
 var logic;
@@ -77,7 +78,7 @@ function initEmptyTiles () {
     // create a sprite for each tile (experimental)
     for (var i = 0 ; i < numCellsWidth; i++){
         for (var j = 0 ; j < numCellsHeight; j++){
-            var newTile = createNewTileSprite(i, j, 4);
+            var newTile = createNewTileSprite(i, j, 3);
             spriteArray[i][j] = newTile;
         }
     }
@@ -91,7 +92,7 @@ function initTiles () {
 
     for (var i = 0 ; i < numTiles; i++){
         // create the rectangular cuts on the tilemaps
-        var rectangle = new PIXI.Rectangle(i * cellWidth, 0, cellWidth, cellHeight);
+        var rectangle = new PIXI.Rectangle(0, i * cellHeight, cellWidth, cellHeight);
         tileArray[i] = rectangle;    
     }
 }
@@ -124,18 +125,19 @@ function createNewTileSprite (x, y, tileCut) {
 function addTile(x, y, color) {
     // then add that tile in the logic class
     var ret = logic.addNewCell(x, y, color);
-    var match = logic.disjointSetMatchRecent();
 
     // if same already filled, delete
     if (ret == 1)
-        color = 4;
+        color = emptyTile;
 
     // change the texture of the sprite
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
     spriteArray[x][y].texture = newTexture;    
 
-    if (match != false){
-        var corner = logic.lookupCorner(x, y);
+    var match = logic.disjointSetMatchRecent();
+    var corner = logic.lookupCorner(x, y);
+
+    if (match != false && corner != 0){
         generateAdditionalCells(match, corner[0], corner[1]);
     }
 }

@@ -66,8 +66,6 @@ function initBoardArray () {
 
 // Logic after a cell has been changed from a nonzero color to zero [Bad runtime]
 Logic.prototype.deleteCell = function(x, y) {
-    console.log("deleting");
-
     // set the board color as empty
     board[x][y] = 0;
 
@@ -77,25 +75,25 @@ Logic.prototype.deleteCell = function(x, y) {
     // check if nonzero
     if (disjointSet == null)
         return;
-
-    // remove that disjoint set
-    spliceDisjointSet(disjointSet);
     
     // readd each point except for the deleted point
     var points = disjointSet.members;
 
     // reset the lookup for these points
-    for (var i = 0 ; i < points.length; i++)
+    for (var i = 0 ; i < points.length; i++){
         delete lookup[[points[i][0], points[i][1]]];
-
-    console.log(lookup);
+        board[points[i][0]][points[i][1]] = 0;
+    }
 
     // then readd all of them (excluding the previous point)
     for (var i = 0 ; i < points.length; i++){
-        if (points[i][0] != x && points[i][1] == y)
-            this.addNewCell(points[0], points[1], points[2]);
+        if ((points[i][0] != x) || (points[i][1] != y)){
+            this.addNewCell(points[i][0], points[i][1], points[i][2]);
+        }
     }
 
+    // remove that disjoint set
+    spliceDisjointSet(disjointSet);
 }
 
 // Logic after new cell has been inputted to board
@@ -233,7 +231,10 @@ function getCardinalDirectionCells (x, y) {
 // returns the corner for a (x,y) coordinate position
 Logic.prototype.lookupCorner = function(x, y){
     var dSet = lookup[[x,y]];
-    return dSet.bounds[0];
+    if (dSet)
+        return dSet.bounds[0];
+    else
+        return 0;
 }
 
 // ======================================= DFA PASSAGE ==============================
