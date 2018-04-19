@@ -1,31 +1,39 @@
 // ============================ GLOBALS ==========================
 
+// game config
+var gameConfig = require('../configs/config.js');
+var resources;
+
 // dom object
 var document;
 var container;
 
 // dom objects
 var mainDivs = [];
-var resourceCount = [];
+var resourceText = [];
+var numResources = [];
 
 // keep track of highlighted
 var currHighlighted = -1;
 
-var numTiles = 5;
+var numTiles = gameConfig.gameConfig.numTiles;
 
-var tileWidth = 32;
-var tileHeight = 32;
+var tileWidth = gameConfig.gameConfig.boardCellWidth;
+var tileHeight = gameConfig.gameConfig.boardCellHeight;
 
-var boardWidth = 1280;
-var boardHeight = 960;
+var boardWidth = gameConfig.boardState.initialWidth;
+var boardHeight = gameConfig.boardState.initialHeight;
 
-var firstSelected = 1;
+var firstSelected = gameConfig.gameConfig.initialColor;
 
 // =========================== CLASS INIT ========================
 
-var TileDisplay = function(aDocument) {
+var TileDisplay = function(aDocument, level) {
     // init globals
     document = aDocument;
+
+    // get the resources
+    resources = require('../games/' + level + '/resources.js');
 
     // initialize main container
     initMainContainer();
@@ -66,16 +74,27 @@ function initTileDisplay() {
         // create the image
         var imageDiv = document.createElement("div");
         imageDiv.classList.add("tile-image");
-        imageDiv.setAttribute('style', "background-position: left 0px top " + tilePosition + "px; float: left; display: inline-block;");
+        imageDiv.setAttribute('style', "background-position: top 0px left " + tilePosition + "px; float: left; display: inline-block;");
 
         // create the text
-        var text = document.createElement("h2");
-        text.setAttribute('style', "margin-left: 10px; margin-top: 6px;")
-        text.innerHTML = 0;
+        var text = document.createElement("p");
+        text.setAttribute('style', "text-align: center; margin-top: 6px;")
+        
+        // determine the value
+        var resourceValue;
+
+        if (resources.resources[i] != null)
+            resourceValue = resources.resources[i];
+        else
+            resourceValue = 0;
+
+        // add that resource value to the array and text
+        text.innerHTML = resourceValue;
+        numResources.push(resourceValue);
 
         // add to array
         mainDivs.push(newDiv);
-        resourceCount.push(text);
+        resourceText.push(text);
 
         // add that to the div
         newDiv.appendChild(imageDiv);
@@ -108,4 +127,45 @@ TileDisplay.prototype.highlightCell = function(index) {
 
     // update the current highlighted
     currHighlighted = index;
+}
+
+// Consume resource
+TileDisplay.prototype.consumeResource = function(index) {
+    // do resource check
+    if (numResources[index] <= 0)
+        return false;
+
+    // get the display
+    var display = resourceText[index];
+
+    // set and get resource value
+    numResources[index]--;
+    var currResourceCount = numResources[index];
+
+    // set the display
+    display.innerHTML = currResourceCount;
+
+    return true;
+}
+
+// Refund resource
+TileDisplay.prototype.refundResource = function(index) {
+    // get the display
+    var display = resourceText[index];
+
+    // set and get resource value
+    numResources[index]++;
+    var currResourceCount = numResources[index];
+
+    display.innerHTML = currResourceCount;
+
+    return true;
+}   
+
+// Resoure check
+TileDisplay.prototype.resourceCheck = function(index) {
+    if (numResources[index] <= 0)
+        return false;
+
+    return true;
 }

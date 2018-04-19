@@ -11,10 +11,12 @@
 var gameConfig = require('../configs/config.js');
 var Logic = require('./Logic.js');
 
+var tileDisplay;
+
 // Tile variables (for tilemap)
-var numTiles = 5;
+var numTiles = gameConfig.gameConfig.numTiles;
 var tileArray = new Array(numTiles);
-var emptyTile = 2;
+var emptyTile = gameConfig.gameConfig.zeroColor;
 
 // Game logic object
 var logic;
@@ -43,15 +45,16 @@ var app;
 var spriteArray;
 
 // Current color of the user
-var currColor = 1;
+var currColor = gameConfig.gameConfig.initialColor;
 
 // ====================================== MAIN CLASS =====================================
 
 // Create a class for the board
-var Board = function(aPIXI, aApp) {
+var Board = function(aPIXI, aApp, aTileDisplay) {
     // initialize variables
     PIXI = aPIXI;
     app = aApp;
+    tileDisplay = aTileDisplay;
 
     // Initialize the object with the game logic
     logic = new Logic();
@@ -78,7 +81,7 @@ function initEmptyTiles () {
     // create a sprite for each tile (experimental)
     for (var i = 0 ; i < numCellsWidth; i++){
         for (var j = 0 ; j < numCellsHeight; j++){
-            var newTile = createNewTileSprite(i, j, 3);
+            var newTile = createNewTileSprite(i, j, emptyTile);
             spriteArray[i][j] = newTile;
         }
     }
@@ -88,11 +91,11 @@ function initEmptyTiles () {
 // Store the rectangles in the image that we wish to retrieve
 function initTiles () {
     // load the main texture sheet for the tileset.png
-    texture = PIXI.loader.resources['./assets/tileset.png'].texture;
+    texture = PIXI.loader.resources['./assets/tileset10.png'].texture;
 
     for (var i = 0 ; i < numTiles; i++){
         // create the rectangular cuts on the tilemaps
-        var rectangle = new PIXI.Rectangle(0, i * cellHeight, cellWidth, cellHeight);
+        var rectangle = new PIXI.Rectangle(i * cellWidth, 0, cellWidth, cellHeight);
         tileArray[i] = rectangle;    
     }
 }
@@ -123,17 +126,31 @@ function createNewTileSprite (x, y, tileCut) {
 
 // Change a tile color
 function addTile(x, y, color) {
+    // first do a resource check
+    if (!tileDisplay.resourceCheck(color))
+        return;
+
     // then add that tile in the logic class
     var ret = logic.addNewCell(x, y, color);
 
-    // if same already filled, delete
+    // if the color is the same ignore
+    if (ret == 3)
+        return;
+
+    // decrement resource value
+    // if the resource count is below zero, ignore
+    tileDisplay.consumeResource(color);
+
+    // refund the cell if placing a 0
     if (ret == 1)
-        color = emptyTile;
+        tileDisplay.refundResource(logic.getLastColorDeleted());
+    
 
     // change the texture of the sprite
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
     spriteArray[x][y].texture = newTexture;    
 
+    // cell generation
     var match = logic.disjointSetMatchRecent();
     var corner = logic.lookupCorner(x, y);
 

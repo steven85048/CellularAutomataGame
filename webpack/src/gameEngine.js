@@ -7,6 +7,8 @@ var TileDisplay = require('./TileDisplay.js');
 
 var gameConfig = require('../configs/config.js');
 
+var currLevel = "level1";
+
 // ===============================================================================
 // ========================= GAME STATICS ========================================
 // ===============================================================================
@@ -69,7 +71,7 @@ function loadAssets() {
         .add([
             "./assets/star.png",
             "./assets/t0.png",
-            "./assets/tileset.png",
+            "./assets/tileset10.png",
         ])
         .load(gameCreate);
 }
@@ -78,14 +80,14 @@ function loadAssets() {
 function gameCreate() {
     console.log("initializing Game");
 
+    // initialize tile selector
+    tileDisplay = new TileDisplay(document, currLevel);
+
     // Initialize board object
-    board = new Board(PIXI, app);
+    board = new Board(PIXI, app, tileDisplay);
 
     // Initialize selector object
     selector = new Selector(graphics, app);
-
-    // initialize tile selector
-    tileDisplay = new TileDisplay(document);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));

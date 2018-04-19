@@ -15,6 +15,11 @@ var dfa;
 var boardWidth = gameConfig.gameConfig.boardCellCountWidth;
 var boardHeight = gameConfig.gameConfig.boardCellCountHeight;
 
+var zeroColor = gameConfig.gameConfig.zeroColor;
+
+// last color deleted
+var lastColorDeleted;
+
 // 2D container to hold the board state
 var board;
 
@@ -114,13 +119,19 @@ Logic.prototype.updateCell = function(x, y, color){
 // Logic after new cell has been inputted to board
 Logic.prototype.addNewCell = function(x, y, color){
     // if the x and y already exist then just delete
-    if (lookup[[x, y]] && color == 3){
+    if (lookup[[x, y]] && color == zeroColor){
+        lastColorDeleted = board[x][y];
         this.deleteCell(x, y);
         return 1;
     }
     // if the cell needs to be different 
     else if (lookup[[x,y]] && board[x][y] != color){
         this.updateCell(x,y,color);
+        return 2;
+    } 
+    // ignore if the colors are the same
+    else if (board[x][y] == color){ 
+        return 3;
     }
 
     // first set the array object
@@ -255,6 +266,10 @@ Logic.prototype.lookupCorner = function(x, y){
         return dSet.bounds[0];
     else
         return 0;
+}
+
+Logic.prototype.getLastColorDeleted = function() {
+    return lastColorDeleted;
 }
 
 // ======================================= DFA PASSAGE ==============================
