@@ -3,6 +3,7 @@
 var PIXI = require('pixi.js')
 var Board = require('./Board.js');
 var Selector = require('./Selector.js');
+var TileDisplay = require('./TileDisplay.js');
 
 var gameConfig = require('../configs/config.js');
 
@@ -57,6 +58,9 @@ var board;
 // Selector object (highlight cells)
 var selector;
 
+// Tile Display object
+var tileDisplay;
+
 // ============================ GAME LOADING FUNCTIONS ===========================
 
 // load the content that the application needs to run
@@ -79,6 +83,9 @@ function gameCreate() {
 
     // Initialize selector object
     selector = new Selector(graphics, app);
+
+    // initialize tile selector
+    tileDisplay = new TileDisplay(document);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
