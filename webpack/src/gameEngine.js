@@ -4,6 +4,7 @@ var PIXI = require('pixi.js')
 var Board = require('./Board.js');
 var Selector = require('./Selector.js');
 var TileDisplay = require('./TileDisplay.js');
+var RulesetDisplay = require('./RulesetDisplay.js');
 
 var gameConfig = require('../configs/config.js');
 
@@ -23,7 +24,10 @@ var graphics = new PIXI.Graphics();
 // ========================= CONFIG SETUP ========================================
 // ===============================================================================
 
-initialConfig();
+// wait until page is loaded
+window.onload = function () {
+    initialConfig();
+}
 
 function initialConfig() {
     // Start the pixi application based on the game config
@@ -37,6 +41,11 @@ function initialConfig() {
 
     // append the canvas of app
     document.getElementById("main_container").appendChild(app.view);
+
+    // then add the tile display
+    var tileDisplayDiv = document.createElement("div");
+    tileDisplayDiv.id = "tile_display";
+    document.getElementById("main_container").appendChild(tileDisplayDiv);
 
     // append a keydown event
     document.addEventListener('keydown', keyDownHandler)
@@ -63,6 +72,9 @@ var selector;
 // Tile Display object
 var tileDisplay;
 
+// ruleset display object
+var rulesetDisplay;
+
 // ============================ GAME LOADING FUNCTIONS ===========================
 
 // load the content that the application needs to run
@@ -78,8 +90,6 @@ function loadAssets() {
 
 // Initialization of the first game state and the first draw of the map
 function gameCreate() {
-    console.log("initializing Game");
-
     // initialize tile selector
     tileDisplay = new TileDisplay(document, currLevel);
 
@@ -88,6 +98,10 @@ function gameCreate() {
 
     // Initialize selector object
     selector = new Selector(graphics, app);
+
+    // INitialize ruleset display object and add to the view
+    rulesetDisplay = new RulesetDisplay(300,300, PIXI);
+    document.getElementById("sidebar").appendChild(rulesetDisplay.getApp().view);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
