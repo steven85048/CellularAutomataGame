@@ -1,3 +1,3 @@
 module.exports = {
-    resources: [15,10,5,8,2,3],
+    resources: [15,13,5,8,2,3],
 }

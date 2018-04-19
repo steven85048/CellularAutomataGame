@@ -125,9 +125,9 @@ function createNewTileSprite (x, y, tileCut) {
 }
 
 // Change a tile color
-function addTile(x, y, color) {
+function addTile(x, y, color, additional) {
     // first do a resource check
-    if (!tileDisplay.resourceCheck(color))
+    if (!tileDisplay.resourceCheck(color) && !additional)
         return;
 
     // then add that tile in the logic class
@@ -137,14 +137,16 @@ function addTile(x, y, color) {
     if (ret == 3)
         return;
 
-    // decrement resource value
-    // if the resource count is below zero, ignore
-    tileDisplay.consumeResource(color);
+    // only consume/refund if not a generating cell
+    if (!additional){
+        // decrement resource value
+        // if the resource count is below zero, ignore
+        tileDisplay.consumeResource(color);
 
-    // refund the cell if placing a 0
-    if (ret == 1)
-        tileDisplay.refundResource(logic.getLastColorDeleted());
-    
+        // refund the cell if placing a 0
+        if (ret == 1)
+            tileDisplay.refundResource(logic.getLastColorDeleted());
+    }
 
     // change the texture of the sprite
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
@@ -162,7 +164,7 @@ function addTile(x, y, color) {
 // Generate additional cells based on the rules
 function generateAdditionalCells(match, x, y){
     for (var i = 0 ; i < match.length; i++){
-        addTile(x + match[i][0], y + match[i][1], match[i][2]);
+        addTile(x + match[i][0], y + match[i][1], match[i][2], true);
     }
 }
 
@@ -175,7 +177,7 @@ function tileClick () {
     var yCoord =  this.y / cellHeight;
 
     // add the tile
-    addTile(xCoord, yCoord, currColor);
+    addTile(xCoord, yCoord, currColor, false);
 }
 
 // Change the color of the tile

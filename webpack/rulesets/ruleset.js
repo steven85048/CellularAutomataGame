@@ -18,6 +18,6 @@ module.exports = {
             generating: [[1,1,1],[1,2,1]],
             width: 3,
             height: 4,
-        }
+        },
     ]
 }
