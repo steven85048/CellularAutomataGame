@@ -34,7 +34,7 @@ function initialConfig() {
     });
 
     // append the canvas of app
-    document.body.appendChild(app.view);
+    document.getElementById("main_container").appendChild(app.view);
 
     // append a keydown event
     document.addEventListener('keydown', keyDownHandler)

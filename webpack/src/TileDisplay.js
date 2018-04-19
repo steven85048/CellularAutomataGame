@@ -47,7 +47,8 @@ function initMainContainer() {
     container = document.getElementById("tile_display");
 
     // calculate center margin and set attribute
-    var marginCenter = (boardWidth - ((tileWidth + 50) * numTiles))/2;
+    var leftSize = (window.innerWidth - boardWidth) / 2;
+    var marginCenter = ((boardWidth - ((tileWidth + 50) * numTiles))/2) + leftSize;
     container.setAttribute('style', "overflow: hidden; margin-left: " + marginCenter + "px;");
 
 }
