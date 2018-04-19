@@ -98,8 +98,14 @@ function keyDownHandler(key) {
     if (key.keyCode < 48 || key.keyCode > 57)
         return;
 
+    // normalize that key
+    var normKey = key.keyCode - 48;
+
+    // then select that bad boy
+    tileDisplay.highlightCell(normKey);
+
     // notify the board that the tile has changed
-    board.changeColor(key.keyCode - 48);
+    board.changeColor(normKey);
 
 }
 
