@@ -162,4 +162,7 @@ function gameLoop(delta){
 
     // redraw highlight
     selector.redrawMarker(mousePosition[0], mousePosition[1]);
+
+    // render the blur
+    board.renderBlur();
 }

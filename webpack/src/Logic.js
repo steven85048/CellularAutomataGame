@@ -37,9 +37,6 @@ var lookup = {};
 // current disjoint set matches
 var matches = [];
 
-// keep track of most recent disjoint set added
-var mostRecent;
-
 // ==================================== CLASS SETUP =========================================
 
 var Logic = function() {
@@ -133,8 +130,6 @@ Logic.prototype.deleteCell = function(x, y) {
                 matches.push([currSet, match]);
         }
     }
-    
-    console.log(matches);
 }
 
 // Update cell color (from nonzero to another color (not zero))
@@ -162,7 +157,6 @@ Logic.prototype.updateCell = function(x, y, color){
 
     if (match != false){
         matches.push([disjointSet, match]);
-        console.log(matches);
     }
 
 }
@@ -265,7 +259,6 @@ Logic.prototype.addNewCell = function(x, y, color){
 
     if (match != false){
         matches.push([newDisjointSet, match]);
-        console.log(matches);
     }
 
     // if a normal add return 0
@@ -325,6 +318,10 @@ Logic.prototype.lookupCorner = function(x, y){
 
 Logic.prototype.getLastColorDeleted = function() {
     return lastColorDeleted;
+}
+
+Logic.prototype.getMatches = function() {
+    return matches;
 }
 
 // ======================================= DFA PASSAGE ==============================

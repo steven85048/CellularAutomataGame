@@ -48,7 +48,10 @@ var spriteArray;
 var currColor = gameConfig.gameConfig.initialColor;
 
 // Map of point (x,y) to filter
-var blurMap = {};
+var blurMap = [];
+
+// counter used for blurring
+var blurCounter = 0;
 
 // ====================================== MAIN CLASS =====================================
 
@@ -140,6 +143,37 @@ function addTile(x, y, color, additional) {
     if (ret == 3)
         return;
 
+    // reset the filters (to make all of them flash concurrently)
+    resetBlurMap();
+
+    // get the generating cells (matches)
+    var matches = logic.getMatches();
+
+    console.log(matches);
+
+    // loop through matches and get generating arrays
+    for (var i = 0 ; i < matches.length; i++){
+        var disjointSet = matches[i][0];
+        var genArray = matches[i][1];
+        
+        // get the relative corner of the set
+        var corner = disjointSet.bounds[0];
+
+        // loop through generating array and add those to the blur list
+        for (var j = 0 ; j < genArray.length; j++){
+            var currPoint = genArray[j];
+
+            // account for offset
+            var actualX = corner[0] + currPoint[0];
+            var actualY = corner[1] + currPoint[1];
+
+            // set the filter
+            var blurFilter = new PIXI.filters.BlurFilter();
+            spriteArray[actualX][actualY].filters = [blurFilter];
+            blurMap[[actualX, actualY]] = blurFilter;
+        }
+    }
+
     // only consume/refund if not a generating cell
     if (!additional){
         // decrement resource value
@@ -170,6 +204,41 @@ function addTile(x, y, color, additional) {
 function generateAdditionalCells(match, x, y){
     for (var i = 0 ; i < match.length; i++){
         addTile(x + match[i][0], y + match[i][1], match[i][2], true);
+    }
+}
+
+// ======================================== BLUR FILTERS =========================================
+
+// empties the current blur map (and filters)
+function resetBlurMap() {
+    // reset all the textures of the current blur map
+    for (key in blurMap){
+        if (blurMap.hasOwnProperty(key)){
+            // get the sprite
+            var currSprite = spriteArray[key[0]][key[1]];
+            
+            // set the blur to 0
+            blurMap[key].blur = 0;
+
+            // set the sprite filter to empty
+            currSprite.filter = null;
+        }
+    }
+
+    blurMap = {};
+}
+
+// runs at a quick interval
+Board.prototype.renderBlur = function() {
+    blurCounter += .03;
+
+    // loop through the filters
+    for (key in blurMap) {
+        if (blurMap.hasOwnProperty(key)) {
+            // get the filter
+            var currBlurFilter = blurMap[key];
+            currBlurFilter.blur = 5 * (Math.cos(blurCounter));
+        }
     }
 }
 
