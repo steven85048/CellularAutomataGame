@@ -50,6 +50,9 @@ function initialConfig() {
     // append a keydown event
     document.addEventListener('keydown', keyDownHandler)
 
+    // add generate button onclick
+    document.getElementById("generate_button").addEventListener("click", generateCells, false);
+
     // after the configuration is loaded, load the content the game needs
     loadAssets();
 }
@@ -135,6 +138,30 @@ function gameCreate() {
 
 }
 
+// ================================= CELL GENERATION =================================
+
+// generate cells on button click
+function generateCells() {
+    board.generateCells();
+}
+
+// ================================= MAIN GAME LOOP ====================================
+
+// The constantly ticking game loop (60 times per second)
+function gameLoop(delta){
+    // get mouse position
+    var global = app.renderer.plugins.interaction.mouse.global;
+
+    mousePosition[0] = global.x;
+    mousePosition[1] = global.y;
+
+    // redraw highlight
+    selector.redrawMarker(mousePosition[0], mousePosition[1]);
+
+    // render the blur
+    board.renderBlur();
+}
+
 // Handle keyboard click
 function keyDownHandler(key) {
     // ignore if key is not in 0-9 range
@@ -150,19 +177,4 @@ function keyDownHandler(key) {
     // notify the board that the tile has changed
     board.changeColor(normKey);
 
-}
-
-// The constantly ticking game loop (60 times per second)
-function gameLoop(delta){
-    // get mouse position
-    var global = app.renderer.plugins.interaction.mouse.global;
-
-    mousePosition[0] = global.x;
-    mousePosition[1] = global.y;
-
-    // redraw highlight
-    selector.redrawMarker(mousePosition[0], mousePosition[1]);
-
-    // render the blur
-    board.renderBlur();
 }

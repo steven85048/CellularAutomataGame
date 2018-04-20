@@ -188,16 +188,6 @@ function addTile(x, y, color, additional) {
     // change the texture of the sprite
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
     spriteArray[x][y].texture = newTexture;    
-
-    /*
-    // cell generation
-    var match = logic.disjointSetMatchRecent();
-    var corner = logic.lookupCorner(x, y);
-
-    if (match != false && corner != 0){
-        generateAdditionalCells(match, corner[0], corner[1]);
-    }
-    */
 }
 
 // Generate additional cells based on the rules
@@ -238,6 +228,23 @@ Board.prototype.renderBlur = function() {
             // get the filter
             var currBlurFilter = blurMap[key];
             currBlurFilter.blur = 5 * (Math.cos(blurCounter));
+        }
+    }
+}
+
+// =================================== GENERATE THE CELLS ========================================
+
+// generate the cells that are matched
+Board.prototype.generateCells = function() {
+    var matches = logic.getMatches();
+
+    // cell generation
+    for (var i = 0 ; i < matches.length; i++){
+        var match = matches[i][1];
+        var corner = matches[i][0].bounds[0];
+
+        if (match != null && corner != null){
+            generateAdditionalCells(match, corner[0], corner[1]);
         }
     }
 }
