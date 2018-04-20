@@ -1,7 +1,24 @@
+
 .tile-image {
     width: 32px;
     height: 32px;
     background-image: url('../assets/tileset10.png');   
+}
+
+#main_container {
+    text-align: center; 
+    padding-top: 70px;
+}
+
+#top_bar {
+    height: 50px;
+    width: 100%;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    background-color: rgb(96, 173, 100);
+    overflow-x: hidden;
 }
 
 .sidebar {
@@ -11,7 +28,7 @@
     z-index: 1; 
     top: 0; 
     left: 0;
-    background-color: rgb(211, 205, 195);
+    background-color: #000;
     overflow-x: hidden; 
-    padding-top: 20px;
+    padding-top: 50px;
 }
