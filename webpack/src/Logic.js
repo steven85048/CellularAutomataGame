@@ -31,8 +31,11 @@ var board;
         members: [[x,y,color]]
     }
 */
-var disjointSets = [];
+
 var lookup = {}; 
+
+// current disjoint set matches
+var matches = [];
 
 // keep track of most recent disjoint set added
 var mostRecent;
@@ -80,6 +83,9 @@ Logic.prototype.deleteCell = function(x, y) {
     // check if nonzero
     if (disjointSet == null)
         return;
+
+    // delete if match exists
+    spliceDisjointSet(matches, disjointSet);
     
     // readd each point except for the deleted point
     var points = disjointSet.members;
@@ -97,23 +103,68 @@ Logic.prototype.deleteCell = function(x, y) {
         }
     }
 
-    // remove that disjoint set
-    spliceDisjointSet(disjointSet);
+    // find all unique dsets not created
+    var uniqueDisjointSets = [];
+    
+    for (var i = 0 ; i < points.length; i++){
+        // again, ignore if points are original x or y
+        if ((points[i][0] == x) && (points[i][1] == y))
+            continue;
+
+        var currSet = lookup[[points[i][0], points[i][1]]];
+
+        // find dupes
+        var dupes = false;
+
+        for (var j = 0 ; j < uniqueDisjointSets.length; j++){
+            // ignore if duplicate
+            if (_.isEqual(currSet, uniqueDisjointSets[j])){
+                dupes = true;
+                break;
+            }
+        }
+
+        // add if not dupe and it matches a set
+        if (!dupes){
+            // pass that newly added set to DFA and match if yes
+            var match = dfa.passInput(currSet);
+
+            if (match != false)
+                matches.push([currSet, match]);
+        }
+    }
+    
+    console.log(matches);
 }
 
 // Update cell color (from nonzero to another color (not zero))
 Logic.prototype.updateCell = function(x, y, color){
+    // set the board color
+    board[x][y] = color;
+
     // first lookup the disjoint set
     var disjointSet = lookup[[x,y]];
 
+    // remove that set from matches
+    spliceDisjointSet(matches, disjointSet);
+
     // then find the point and update the color
-    for (var i = 0 ; i < disjointSet.members; i++){
+    for (var i = 0 ; i < disjointSet.members.length; i++){
         // find the thing and update color
         if (disjointSet.members[i][0] == x && disjointSet.members[i][1] == y){
             disjointSet.members[i][2] = color;
             break;
         }
     }
+
+    // pass that newly added set to DFA and match if yes
+    var match = dfa.passInput(disjointSet);
+
+    if (match != false){
+        matches.push([disjointSet, match]);
+        console.log(matches);
+    }
+
 }
 
 // Logic after new cell has been inputted to board
@@ -160,7 +211,7 @@ Logic.prototype.addNewCell = function(x, y, color){
                 dirHash[currSet.bounds[0]] = true;
 
                 // remove the neighboring disjoint set
-                spliceDisjointSet(currSet);
+                spliceDisjointSet(matches, currSet);
             }
         }
     }
@@ -204,25 +255,29 @@ Logic.prototype.addNewCell = function(x, y, color){
         // set the newDisjointSet parameters
         newDisjointSet.bounds = [upperLeft, bottomRight[0] - upperLeft[0], bottomRight[1] - upperLeft[1]];        
 
-        // debugging
-        //console.log("New corner: " + newDisjointSet.bounds[0][0] + "   " + newDisjointSet.bounds[0][1] + "\n");
     }
 
-    // add the disjoint set, add to lookup, then set most recent
-    disjointSets.push(newDisjointSet);
+    // add to lookup
     lookup[[point[0], point[1]]] = newDisjointSet;
-    mostRecent = newDisjointSet;
+
+    // pass that newly added set to DFA and match if yes
+    var match = dfa.passInput(newDisjointSet);
+
+    if (match != false){
+        matches.push([newDisjointSet, match]);
+        console.log(matches);
+    }
 
     // if a normal add return 0
     return 0;
 }
 
 // remove the disjoint set from the set of all sets if equal 
-function spliceDisjointSet(disjointSet){
+function spliceDisjointSet(totalSet, disjointSet){
     // also remove this disjoint set from the running disjointSets
-    for (var j = 0 ; j < disjointSets.length; j++){
-        if (_.isEqual(disjointSets[j], disjointSet)){
-            disjointSets.splice(j, 1);
+    for (var j = 0 ; j < totalSet.length; j++){
+        if (_.isEqual(totalSet[j][0], disjointSet)){
+            totalSet.splice(j, 1);
             break;
         }
     }

@@ -47,6 +47,9 @@ var spriteArray;
 // Current color of the user
 var currColor = gameConfig.gameConfig.initialColor;
 
+// Map of point (x,y) to filter
+var blurMap = {};
+
 // ====================================== MAIN CLASS =====================================
 
 // Create a class for the board
@@ -152,6 +155,7 @@ function addTile(x, y, color, additional) {
     var newTexture = new PIXI.Texture(texture, tileArray[color]);
     spriteArray[x][y].texture = newTexture;    
 
+    /*
     // cell generation
     var match = logic.disjointSetMatchRecent();
     var corner = logic.lookupCorner(x, y);
@@ -159,6 +163,7 @@ function addTile(x, y, color, additional) {
     if (match != false && corner != 0){
         generateAdditionalCells(match, corner[0], corner[1]);
     }
+    */
 }
 
 // Generate additional cells based on the rules
