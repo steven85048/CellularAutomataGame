@@ -97,9 +97,38 @@ function gameCreate() {
     // Initialize selector object
     selector = new Selector(graphics, app);
 
-    // INitialize ruleset display object and add to the view
-    rulesetDisplay = new RulesetDisplay(300,300, PIXI);
-    document.getElementById("sidebar").appendChild(rulesetDisplay.getApp().view);
+    // TESTING
+    var currRule1 = {
+        points: [[0,0,1], [1,0,1], [2,0,1], [3,0,1]],
+        generating: [[-1,0,1],[4,0,1]],
+        width: 4,
+        height: 1,
+    };
+
+    var currRule2 = {
+        points: [[0,0,1], [1,0,1], [2,0,1], [0,1,1], [2,1,1], [0,2,1], [2,2,1], [0,3,1], [1,3,1], [2,3,1]],
+        generating: [[1,1,1],[1,2,1]],
+        width: 3,
+        height: 4,
+    };
+
+    // Initialize ruleset display object and add to the view
+    rulesetDisplay = new RulesetDisplay(PIXI, currRule1, 25, 25);
+    var rulesetDisplay2 = new RulesetDisplay(PIXI, currRule2, 25, 25);
+
+    var enclosingDiv = document.createElement("div");
+    enclosingDiv.setAttribute('style', 'text-align: center;');
+
+    var view1 = rulesetDisplay.getApp().view;
+    var view2 = rulesetDisplay2.getApp().view;
+
+    view1.setAttribute('style', 'margin: auto; position: relative; display:block;');
+    view2.setAttribute('style', 'margin: auto; position: relative; display:block;');
+
+    enclosingDiv.appendChild(view1);
+    enclosingDiv.appendChild(view2);
+
+    document.getElementById("sidebar").appendChild(enclosingDiv);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
