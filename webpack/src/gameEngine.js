@@ -81,8 +81,6 @@ var rulesetDisplay;
 function loadAssets() {
     PIXI.loader
         .add([
-            "./assets/star.png",
-            "./assets/t0.png",
             "./assets/tileset10.png",
         ])
         .load(gameCreate);
