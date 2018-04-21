@@ -99,37 +99,6 @@ Logic.prototype.deleteCell = function(x, y) {
             this.addNewCell(points[i][0], points[i][1], points[i][2]);
         }
     }
-
-    // find all unique dsets not created
-    var uniqueDisjointSets = [];
-    
-    for (var i = 0 ; i < points.length; i++){
-        // again, ignore if points are original x or y
-        if ((points[i][0] == x) && (points[i][1] == y))
-            continue;
-
-        var currSet = lookup[[points[i][0], points[i][1]]];
-
-        // find dupes
-        var dupes = false;
-
-        for (var j = 0 ; j < uniqueDisjointSets.length; j++){
-            // ignore if duplicate
-            if (_.isEqual(currSet, uniqueDisjointSets[j])){
-                dupes = true;
-                break;
-            }
-        }
-
-        // add if not dupe and it matches a set
-        if (!dupes){
-            // pass that newly added set to DFA and match if yes
-            var match = dfa.passInput(currSet);
-
-            if (match != false)
-                matches.push([currSet, match]);
-        }
-    }
 }
 
 // Update cell color (from nonzero to another color (not zero))
@@ -156,6 +125,7 @@ Logic.prototype.updateCell = function(x, y, color){
     var match = dfa.passInput(disjointSet);
 
     if (match != false){
+        console.log("update push");
         matches.push([disjointSet, match]);
     }
 
@@ -258,6 +228,7 @@ Logic.prototype.addNewCell = function(x, y, color){
     var match = dfa.passInput(newDisjointSet);
 
     if (match != false){
+        console.log("ADD PUSH");
         matches.push([newDisjointSet, match]);
     }
 
@@ -270,6 +241,7 @@ function spliceDisjointSet(totalSet, disjointSet){
     // also remove this disjoint set from the running disjointSets
     for (var j = 0 ; j < totalSet.length; j++){
         if (_.isEqual(totalSet[j][0], disjointSet)){
+            console.log("splicing");
             totalSet.splice(j, 1);
             break;
         }

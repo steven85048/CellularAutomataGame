@@ -149,7 +149,7 @@ function addTile(x, y, color, additional) {
     // get the generating cells (matches)
     var matches = logic.getMatches();
 
-    console.log(matches);
+    //console.log(matches);
 
     // loop through matches and get generating arrays
     for (var i = 0 ; i < matches.length; i++){
@@ -230,25 +230,31 @@ Board.prototype.renderBlur = function() {
 // generate the cells that are matched
 Board.prototype.generateCells = function() {
     var matches = logic.getMatches();
+    var matchPoints = [];
+
+    console.log("generating");
 
     // cell generation
     for (var i = 0 ; i < matches.length; i++){
         var match = matches[i][1];
         var corner = matches[i][0].bounds[0];
 
-        if (match != null && corner != null){
-            generateAdditionalCells(match, corner[0], corner[1]);
+        console.log(match);
+
+        // check if no match
+        if (match == null || corner == null)
+            continue;
+
+        // don't want to add them as they go since want to add (ALL) the disjoint sets at once, so store them in an intermediate array
+        for (var j = 0 ; j < match.length; j++) {
+            matchPoints.push([match[j][0] + corner[0], match[j][1] + corner[1], match[j][2]])
         }
     }
-}
 
-// Generate additional cells based on the rules
-function generateAdditionalCells(match, x, y){
-    for (var i = 0 ; i < match.length; i++){
-        addTile(x + match[i][0], y + match[i][1], match[i][2], true);
-    }
+    // add all the generated cells
+    for (var i = 0 ; i < matchPoints.length; i++)
+        addTile(matchPoints[i][0], matchPoints[i][1], matchPoints[i][2], true);
 }
-
 
 // ===================================== TILE EVENT LISTENERS =====================================
 

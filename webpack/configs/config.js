@@ -21,6 +21,6 @@ exports.gameConfig = {
 
     // tileset configs
     numTiles: 10,
-    initialColor: 0,
+    initialColor: 1,
     zeroColor: 0,
 };
