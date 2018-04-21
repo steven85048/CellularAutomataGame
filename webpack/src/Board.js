@@ -190,13 +190,6 @@ function addTile(x, y, color, additional) {
     spriteArray[x][y].texture = newTexture;    
 }
 
-// Generate additional cells based on the rules
-function generateAdditionalCells(match, x, y){
-    for (var i = 0 ; i < match.length; i++){
-        addTile(x + match[i][0], y + match[i][1], match[i][2], true);
-    }
-}
-
 // ======================================== BLUR FILTERS =========================================
 
 // empties the current blur map (and filters)
@@ -248,6 +241,14 @@ Board.prototype.generateCells = function() {
         }
     }
 }
+
+// Generate additional cells based on the rules
+function generateAdditionalCells(match, x, y){
+    for (var i = 0 ; i < match.length; i++){
+        addTile(x + match[i][0], y + match[i][1], match[i][2], true);
+    }
+}
+
 
 // ===================================== TILE EVENT LISTENERS =====================================
 

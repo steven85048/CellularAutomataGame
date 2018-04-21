@@ -116,6 +116,8 @@ function gameCreate() {
 
 // create the ruleset display
 function generateRulesetDisplay(ruleSet){
+    var accordionDiv = document.getElementById("accordion");
+
     // loop through rules and add a rulesetDisplay for each
     for (var i = 0 ; i < ruleSet.rules.length; i++){
         // get the current rule
@@ -124,20 +126,64 @@ function generateRulesetDisplay(ruleSet){
         // create a new ruleset display
         var rulesetDisplay = new RulesetDisplay(PIXI, currRule, 25, 25);
         
-        // create the enclosing Div
-        var enclosingDiv = document.createElement("div");
-        enclosingDiv.setAttribute('style', 'text-align: center;');
-
         // get the view for that app
         var view = rulesetDisplay.getApp().view;
-        view.setAttribute('style', 'margin: auto; position: relative; display:block; margin-top: 30px;');
+        view.setAttribute('style', 'margin: auto; position: relative; display:block;');
 
-        // add that canvas to the enclosing div
-        enclosingDiv.appendChild(view);
+        // ======================= CREATE THE TOGGLE ================================
+        var ruleNum = "Rule " + (i+1);
+        var headerNum = "Header " + (i+1);
 
-        // then add that div to the sidebar
-        document.getElementById("sidebar").appendChild(enclosingDiv);
+        // create the enclosing Div
+        var cardDiv = document.createElement("div");
+        cardDiv.setAttribute('class', 'card');
 
+        // create the card header
+        var cardHeader = document.createElement('div');
+        cardHeader.setAttribute('class', 'card-header');
+        cardHeader.id = headerNum;
+
+        // create the header text
+        var h5 = document.createElement('h5');
+        h5.setAttribute('class', 'mb-0');
+
+        // create the data toggle for the rule
+        var toggle = document.createElement('button');
+        toggle.setAttribute('class', 'btn btn-link');
+        toggle.setAttribute('data-toggle', 'collapse');
+        toggle.setAttribute('data-target', '#' + ruleNum);
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-controls', ruleNum);
+
+        toggle.innerHTML = ruleNum;
+
+        // append the children
+        h5.appendChild(toggle);
+        cardHeader.appendChild(h5);
+        cardDiv.appendChild(cardHeader);
+
+        // ====================== CREATE THE DIV CONTENTS ==============================
+
+        // Create the collapsable div
+        var collapsableDiv = document.createElement('div');
+
+        collapsableDiv.id = ruleNum;
+        collapsableDiv.setAttribute('class', 'collapse show');
+        collapsableDiv.setAttribute('aria-labelledby', headerNum);
+        collapsableDiv.setAttribute('data-parent', '#accordion');
+
+        // Create the div body
+        var canvasBody = document.createElement('div');
+        canvasBody.setAttribute('class', 'card-body');
+        canvasBody.setAttribute('style', 'text-align: center;');
+
+        // append the elements
+        canvasBody.appendChild(view);
+        collapsableDiv.appendChild(canvasBody);
+        cardDiv.appendChild(collapsableDiv);
+
+        // add that to the final div
+        accordionDiv.appendChild(cardDiv);
     }
 }
 

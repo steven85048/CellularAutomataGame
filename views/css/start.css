@@ -12,21 +12,20 @@
 
 .generate_button {
     margin: auto;
-    height: 100px;
-    width: 250px;
+    height: 250px;
+    width: 100px;
     position: fixed;
-    top: 90%;
-    left: 20px;
+    top: 5%;
 }
 
 #top_bar {
-    height: 50px;
+    height: 65px;
     width: 100%;
     position: fixed;
     z-index: 2;
     top: 0;
     left: 0;
-    background-color: rgb(96, 173, 100);
+    background-color: #007bff;
     overflow-x: hidden;
 }
 
@@ -37,7 +36,7 @@
     z-index: 1; 
     top: 0; 
     left: 0;
-    background-color: #d7caca;
+    background-color: #ffffff;
     overflow-x: hidden; 
     padding-top: 50px;
 }
