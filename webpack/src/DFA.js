@@ -1,7 +1,8 @@
 // ============================================ GLOBALS ===================================
 
-// Get the game number
+// Get the game number and problem solved
 var GameNumber = require('./GameNumber.js');
+var ProblemSolved = require('./GameEnd.js');
 
 var ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
 
@@ -9,6 +10,7 @@ var ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
     DFA is encoded as a map starting from the startState. Each node is encoded as follows:
     DFA = 
     {
+        Final: boolean (if level completion state)
         Accepting: boolean, 
         Transition: Map - <(Movement Direction, To-State-Color), DFA>
         Generating: (if accepting, specify the cells generated - relative to the upper left corner)
@@ -30,18 +32,20 @@ module.exports = DFA;
 // access the ruleset and load the DFA
 function loadDFAFromRuleset() {
     // get the ruleset strings
-    var rulesetStrings = generateStateTransition(ruleSet);
-    
+    var rulesetStrings = generateStateTransition(ruleSet.rules);
+    var finalStrings = generateStateTransition(ruleSet.accepting_rule);
+
     // then from those strings generate the DFA
-    var combDFA = generateDFA(rulesetStrings);
+    var combDFA = generateDFA(rulesetStrings, finalStrings);
 
 } 
 
 // using ruleset strings, generate the DFA:
-function generateDFA(rulesetStrings){
+function generateDFA(rulesetStrings, finalStrings){
     // first create the start node
     startState = 
     {
+        final: false,
         accepting: false,
         transition: {},
         generating: null,
@@ -50,14 +54,21 @@ function generateDFA(rulesetStrings){
     // loop through all rules and add to DFA
     for (var i = 0 ; i < rulesetStrings.length; i++){
         var rule = rulesetStrings[i];
-        addRuleToDFA(rule, startState, i);
+        addRuleToDFA(rule, startState, i, false);
+    }
+
+    // loop through final rules
+    for (var i = 0 ; i < finalStrings.length; i++){
+        var rule = finalStrings[i];
+        var pointer = addRuleToDFA(rule, startState, i, true);
+        pointer.final = true;
     }
 
     return startState;
 }
 
 // add a rule to the current DFA
-function addRuleToDFA(rule, startState, index){
+function addRuleToDFA(rule, startState, index, isFinal){
     var pointer = startState;
 
     // loop through all the rules
@@ -70,19 +81,24 @@ function addRuleToDFA(rule, startState, index){
         } else { // make a new transition
             var newState = 
             {
+                final: false,
                 accepting: false,
                 transition: {},
                 generating: null,
             };
 
-            pointer.transition[inputCharacter] = newState;
+            pointer.transition[inputCharacter] = newState;                
             pointer = newState;
         }
     }
 
     // set the last state as accepting and append the generating rules
     pointer.accepting = true;
-    pointer.generating = ruleSet.rules[index].generating;
+
+    if (!isFinal)
+        pointer.generating = ruleSet.rules[index].generating;
+
+    return pointer;
     
 }
 
@@ -91,8 +107,8 @@ function generateStateTransition(ruleSet) {
     var rulesetStrings = [];
 
     // loop through each rule, get the string for each, and append to total strings
-    for (var i = 0 ; i < ruleSet.rules.length; i++){
-        var currRule = ruleSet.rules[i];
+    for (var i = 0 ; i < ruleSet.length; i++){
+        var currRule = ruleSet[i];
         var inputString = generateInputString(currRule.points, 0, 0, currRule.width, currRule.height);
         rulesetStrings.push(inputString);
     }
@@ -173,8 +189,11 @@ function determineAccept(inputString) {
     }
 
     // if ending in accept state or not
+    if (pointer.final)
+        ProblemSolved.problemCompleted();
+
     if (pointer.accepting)
         return pointer.generating;
-    else
+    else 
         return false;
 }

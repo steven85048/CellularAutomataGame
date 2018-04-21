@@ -149,8 +149,6 @@ function addTile(x, y, color, additional) {
     // get the generating cells (matches)
     var matches = logic.getMatches();
 
-    //console.log(matches);
-
     // loop through matches and get generating arrays
     for (var i = 0 ; i < matches.length; i++){
         var disjointSet = matches[i][0];
@@ -199,9 +197,14 @@ function resetBlurMap() {
         if (blurMap.hasOwnProperty(key)){
             // get the sprite
             var currSprite = spriteArray[key[0]][key[1]];
-            
+
             // set the blur to 0
             blurMap[key].blur = 0;
+
+            // somehow currsprite is empty; check for that i guess
+            if (currSprite == null){
+                continue;
+            }
 
             // set the sprite filter to empty
             currSprite.filter = null;
@@ -232,14 +235,10 @@ Board.prototype.generateCells = function() {
     var matches = logic.getMatches();
     var matchPoints = [];
 
-    console.log("generating");
-
     // cell generation
     for (var i = 0 ; i < matches.length; i++){
         var match = matches[i][1];
         var corner = matches[i][0].bounds[0];
-
-        console.log(match);
 
         // check if no match
         if (match == null || corner == null)

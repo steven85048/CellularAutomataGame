@@ -125,7 +125,6 @@ Logic.prototype.updateCell = function(x, y, color){
     var match = dfa.passInput(disjointSet);
 
     if (match != false){
-        console.log("update push");
         matches.push([disjointSet, match]);
     }
 
@@ -228,7 +227,6 @@ Logic.prototype.addNewCell = function(x, y, color){
     var match = dfa.passInput(newDisjointSet);
 
     if (match != false){
-        console.log("ADD PUSH");
         matches.push([newDisjointSet, match]);
     }
 
@@ -241,7 +239,6 @@ function spliceDisjointSet(totalSet, disjointSet){
     // also remove this disjoint set from the running disjointSets
     for (var j = 0 ; j < totalSet.length; j++){
         if (_.isEqual(totalSet[j][0], disjointSet)){
-            console.log("splicing");
             totalSet.splice(j, 1);
             break;
         }
@@ -294,25 +291,4 @@ Logic.prototype.getLastColorDeleted = function() {
 
 Logic.prototype.getMatches = function() {
     return matches;
-}
-
-// ======================================= DFA PASSAGE ==============================
-
-// pass the disjoint sets (all) through the DFA
-Logic.prototype.disjointSetMatchAll = function() {
-    // loop through the disjoint sets
-    for (var i = 0 ; i < disjointSets.length; i++){
-        var currSet = disjointSets[i];
-        dfa.passInput(currSet);
-    }
-}
-
-// pass a single disjoint set through the DFA
-Logic.prototype.disjointSetMatchRecent = function() {
-    return dfa.passInput(mostRecent);
-}
-
-// pass that disjoint set through the dfa
-function disjointSetPass(disjointSet) {
-   return dfa.passInput(disjointSet);
 }

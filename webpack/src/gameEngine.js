@@ -6,6 +6,7 @@ var Selector = require('./Selector.js');
 var TileDisplay = require('./TileDisplay.js');
 var RulesetDisplay = require('./RulesetDisplay.js');
 var GameNumber = require('./GameNumber.js');
+var GameEnd = require('./GameEnd.js');
 
 // conig
 var gameConfig = require('../configs/config.js');
@@ -105,8 +106,9 @@ function gameCreate() {
 
     // create the rulesets
     ruleSet =  require('../games/' + GameNumber.currGame + '/ruleset.js')
-    generateRulesetDisplay(ruleSet);
-
+    generateRulesetDisplay(ruleSet.accepting_rule, true);
+    generateRulesetDisplay(ruleSet.rules, false);
+    
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
 
@@ -115,23 +117,29 @@ function gameCreate() {
 // ================================= CELL GENERATION =================================
 
 // create the ruleset display
-function generateRulesetDisplay(ruleSet){
+function generateRulesetDisplay(ruleSet, finalRule){
     var accordionDiv = document.getElementById("accordion");
 
     // loop through rules and add a rulesetDisplay for each
-    for (var i = 0 ; i < ruleSet.rules.length; i++){
+    for (var i = 0 ; i < ruleSet.length; i++){
         // get the current rule
-        var currRule = ruleSet.rules[i];
+        var currRule = ruleSet[i];
 
         // create a new ruleset display
-        var rulesetDisplay = new RulesetDisplay(PIXI, currRule, 25, 25);
+        var rulesetDisplay = new RulesetDisplay(PIXI, currRule, 15, 15);
         
         // get the view for that app
         var view = rulesetDisplay.getApp().view;
         view.setAttribute('style', 'margin: auto; position: relative; display:block;');
 
         // ======================= CREATE THE TOGGLE ================================
-        var ruleNum = "Rule " + (i+1);
+        var ruleNum;
+
+        if (!finalRule)
+            ruleNum = "Rule " + (i+1);
+        else
+            ruleNum = "Accepting Rule";
+
         var headerNum = "Header " + (i+1);
 
         // create the enclosing Div
@@ -143,17 +151,22 @@ function generateRulesetDisplay(ruleSet){
         cardHeader.setAttribute('class', 'card-header');
         cardHeader.id = headerNum;
 
+        if (finalRule){
+            cardHeader.setAttribute('style', 'background-color: #f47142');
+        }
+
         // create the header text
         var h5 = document.createElement('h5');
         h5.setAttribute('class', 'mb-0');
+        h5.setAttribute('style', 'text-align:center');
 
         // create the data toggle for the rule
         var toggle = document.createElement('button');
         toggle.setAttribute('class', 'btn btn-link');
         toggle.setAttribute('data-toggle', 'collapse');
         toggle.setAttribute('data-target', '#' + ruleNum);
-        toggle.setAttribute('aria-expanded', 'true');
-        toggle.setAttribute('aria-controls', ruleNum);
+        //toggle.setAttribute('aria-expanded', 'true');
+        //toggle.setAttribute('aria-controls', ruleNum);
 
         toggle.innerHTML = ruleNum;
 
@@ -169,7 +182,7 @@ function generateRulesetDisplay(ruleSet){
 
         collapsableDiv.id = ruleNum;
         collapsableDiv.setAttribute('class', 'collapse show');
-        collapsableDiv.setAttribute('aria-labelledby', headerNum);
+        //collapsableDiv.setAttribute('aria-labelledby', headerNum);
         collapsableDiv.setAttribute('data-parent', '#accordion');
 
         // Create the div body
@@ -189,13 +202,21 @@ function generateRulesetDisplay(ruleSet){
 
 // generate cells on button click
 function generateCells() {
+    // generate cells
     board.generateCells();
+
+    // also check for resources (in TileDisplay)
 }
 
 // ================================= MAIN GAME LOOP ====================================
 
 // The constantly ticking game loop (60 times per second)
 function gameLoop(delta){
+    // check if game has been completed
+    if (GameEnd.problemSolved){
+        document.body.setAttribute('style', 'background-color: black');
+    }
+
     // get mouse position
     var global = app.renderer.plugins.interaction.mouse.global;
 
