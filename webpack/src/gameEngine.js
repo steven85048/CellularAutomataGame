@@ -165,8 +165,8 @@ function generateRulesetDisplay(ruleSet, finalRule){
         toggle.setAttribute('class', 'btn btn-link');
         toggle.setAttribute('data-toggle', 'collapse');
         toggle.setAttribute('data-target', '#' + ruleNum);
-        //toggle.setAttribute('aria-expanded', 'true');
-        //toggle.setAttribute('aria-controls', ruleNum);
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-controls', ruleNum);
 
         toggle.innerHTML = ruleNum;
 
@@ -182,7 +182,7 @@ function generateRulesetDisplay(ruleSet, finalRule){
 
         collapsableDiv.id = ruleNum;
         collapsableDiv.setAttribute('class', 'collapse show');
-        //collapsableDiv.setAttribute('aria-labelledby', headerNum);
+        collapsableDiv.setAttribute('aria-labelledby', headerNum);
         collapsableDiv.setAttribute('data-parent', '#accordion');
 
         // Create the div body
@@ -202,10 +202,11 @@ function generateRulesetDisplay(ruleSet, finalRule){
 
 // generate cells on button click
 function generateCells() {
-    // generate cells
-    board.generateCells();
+    // check for resources (in TileDisplay)
+    var check = tileDisplay.consumeGeneration();
 
-    // also check for resources (in TileDisplay)
+    if (check)
+        board.generateCells();
 }
 
 // ================================= MAIN GAME LOOP ====================================

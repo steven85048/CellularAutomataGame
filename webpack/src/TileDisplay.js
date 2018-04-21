@@ -11,7 +11,10 @@ var container;
 // dom objects
 var mainDivs = [];
 var resourceText = [];
+
+// resource count
 var numResources = [];
+var generations;
 
 // keep track of highlighted
 var currHighlighted = -1;
@@ -26,6 +29,9 @@ var boardHeight = gameConfig.boardState.initialHeight;
 
 var firstSelected = gameConfig.gameConfig.initialColor;
 
+// button to generate
+var generateButton;
+
 // =========================== CLASS INIT ========================
 
 var TileDisplay = function(aDocument, level) {
@@ -34,6 +40,11 @@ var TileDisplay = function(aDocument, level) {
 
     // get the resources
     resources = require('../games/' + level + '/resources.js');
+
+    // init generations and button
+    generateButton = document.getElementById("generate_button");
+    generations = resources.generations;
+    initButtonText();
 
     // initialize main container
     initMainContainer();
@@ -48,6 +59,11 @@ var TileDisplay = function(aDocument, level) {
 module.exports = TileDisplay;
 
 // ======================= INITIALIZATION ===============================
+
+// Initialize the button initial text
+function initButtonText() {
+    generateButton.innerHTML = "Generate <br> (" + generations + ")";
+}
 
 // initialize the main container
 function initMainContainer() {
@@ -128,6 +144,8 @@ TileDisplay.prototype.highlightCell = function(index) {
     currHighlighted = index;
 }
 
+// ============== TILE RESOURCE ==============
+
 // Consume resource
 TileDisplay.prototype.consumeResource = function(index) {
     // do resource check
@@ -167,4 +185,27 @@ TileDisplay.prototype.resourceCheck = function(index) {
         return false;
 
     return true;
+}
+
+// =========== GENERATION RESOURCE ===========
+
+// consume a generation
+TileDisplay.prototype.consumeGeneration = function() {
+    if (generations > 0){ 
+        // consume a generation
+        generations--;
+
+        // set button text
+        generateButton.innerHTML = "Generate <br> (" + generations + ")";
+
+        // set button style if 0
+        if (generations == 0){
+            generateButton.disabled = true;
+        }
+
+        return true;
+    } else {
+        alert("stop changing the style you fuck");
+        return false;
+    }
 }
