@@ -5,10 +5,16 @@ var Board = require('./Board.js');
 var Selector = require('./Selector.js');
 var TileDisplay = require('./TileDisplay.js');
 var RulesetDisplay = require('./RulesetDisplay.js');
+var GameNumber = require('./GameNumber.js');
 
+// conig
 var gameConfig = require('../configs/config.js');
 
-var currLevel = "level1";
+// game number and ruleset for this level
+var currLevel = GameNumber.currGame;
+
+// get the ruleset for the current game number
+var ruleSet;
 
 // ===============================================================================
 // ========================= GAME STATICS ========================================
@@ -75,9 +81,6 @@ var selector;
 // Tile Display object
 var tileDisplay;
 
-// ruleset display object
-var rulesetDisplay;
-
 // ============================ GAME LOADING FUNCTIONS ===========================
 
 // load the content that the application needs to run
@@ -100,38 +103,9 @@ function gameCreate() {
     // Initialize selector object
     selector = new Selector(graphics, app);
 
-    // TESTING
-    var currRule1 = {
-        points: [[0,0,1], [1,0,1], [2,0,1], [3,0,1]],
-        generating: [[-1,0,1],[4,0,1]],
-        width: 4,
-        height: 1,
-    };
-
-    var currRule2 = {
-        points: [[0,0,1], [1,0,1], [2,0,1], [0,1,1], [2,1,1], [0,2,1], [2,2,1], [0,3,1], [1,3,1], [2,3,1]],
-        generating: [[1,1,1],[1,2,1]],
-        width: 3,
-        height: 4,
-    };
-
-    // Initialize ruleset display object and add to the view
-    rulesetDisplay = new RulesetDisplay(PIXI, currRule1, 25, 25);
-    var rulesetDisplay2 = new RulesetDisplay(PIXI, currRule2, 25, 25);
-
-    var enclosingDiv = document.createElement("div");
-    enclosingDiv.setAttribute('style', 'text-align: center;');
-
-    var view1 = rulesetDisplay.getApp().view;
-    var view2 = rulesetDisplay2.getApp().view;
-
-    view1.setAttribute('style', 'margin: auto; position: relative; display:block;');
-    view2.setAttribute('style', 'margin: auto; position: relative; display:block;');
-
-    enclosingDiv.appendChild(view1);
-    enclosingDiv.appendChild(view2);
-
-    document.getElementById("sidebar").appendChild(enclosingDiv);
+    // create the rulesets
+    ruleSet =  require('../games/' + GameNumber.currGame + '/ruleset.js')
+    generateRulesetDisplay(ruleSet);
 
     // init the app timer
     app.ticker.add(delta => gameLoop(delta));
@@ -139,6 +113,33 @@ function gameCreate() {
 }
 
 // ================================= CELL GENERATION =================================
+
+// create the ruleset display
+function generateRulesetDisplay(ruleSet){
+    // loop through rules and add a rulesetDisplay for each
+    for (var i = 0 ; i < ruleSet.rules.length; i++){
+        // get the current rule
+        var currRule = ruleSet.rules[i];
+
+        // create a new ruleset display
+        var rulesetDisplay = new RulesetDisplay(PIXI, currRule, 25, 25);
+        
+        // create the enclosing Div
+        var enclosingDiv = document.createElement("div");
+        enclosingDiv.setAttribute('style', 'text-align: center;');
+
+        // get the view for that app
+        var view = rulesetDisplay.getApp().view;
+        view.setAttribute('style', 'margin: auto; position: relative; display:block; margin-top: 30px;');
+
+        // add that canvas to the enclosing div
+        enclosingDiv.appendChild(view);
+
+        // then add that div to the sidebar
+        document.getElementById("sidebar").appendChild(enclosingDiv);
+
+    }
+}
 
 // generate cells on button click
 function generateCells() {

@@ -2,12 +2,7 @@
 var PIXI;
 
 // current rule for testing purposes
-var currRule = {
-    points: [[0,0,1], [1,0,1], [2,0,1], [3,0,1]],
-    generating: [[-1,0,1],[4,0,1]],
-    width: 4,
-    height: 1,
-};
+var currRule;
 
 // cell width (relative to tileset)
 var cellWidth = 32;
@@ -27,6 +22,8 @@ var texture;
 // =========================== CLASS INIT ========================
 
 var RulesetDisplay = function(aPIXI, aRule, aSpriteWidth, aSpriteHeight) {    
+    console.log("ruleset display");
+
     // set globals
     PIXI = aPIXI;
     this.currRule = aRule;

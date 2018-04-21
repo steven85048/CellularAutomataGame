@@ -1,6 +1,9 @@
 // ============================================ GLOBALS ===================================
 
-var ruleSet = require('../rulesets/ruleset.js');
+// Get the game number
+var GameNumber = require('./GameNumber.js');
+
+var ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
 
 /*
     DFA is encoded as a map starting from the startState. Each node is encoded as follows:
@@ -154,7 +157,6 @@ DFA.prototype.passInput = function(disjointSet) {
     return determineAccept(inputString);
 }
 
-// passes the input string through the dfa
 function determineAccept(inputString) {
     var pointer = startState;
 
