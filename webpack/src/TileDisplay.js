@@ -8,7 +8,7 @@ var resources;
 var document;
 var container;
 
-// dom objects
+// dom objects 
 var mainDivs = [];
 var resourceText = [];
 
@@ -119,6 +119,54 @@ function initTileDisplay() {
     }
 }
 
+// ================================= UNDO ==========================================
+
+// move the game state to the undo
+module.exports.saveGameState = function(){
+    var savedState = 
+    {
+        numResources: cloneObject(numResources),
+        generations: generations,
+    }
+
+    return savedState;
+}
+
+// recover the state to a prior game state
+module.exports.recoverState = function(state) {
+    // recover the state
+    numResources = state.numResources;
+    generations = state.generations;
+
+    // update the display
+    updateDisplay();
+
+}
+
+// clone a json object
+function cloneObject(obj){
+    return JSON.parse(JSON.stringify(obj));
+}
+
+// Updates the display
+function updateDisplay() {
+    // update the resource display
+    for (var i = 0 ; i < numResources.length; i++){
+        var display = resourceText[i];
+        var resourceCount = numResources[i];
+
+        display.innerHTML = resourceCount;
+    }
+
+    // update the generations display() {
+    generateButton.innerHTML = "Generate <br> (" + generations + ")";
+
+    if (generations > 0)
+        generateButton.disabled = false;
+    else
+        generateButton.disabled = true;
+}
+
 // ============================= SETTING ==================================
 
 // select the cell at that location
@@ -208,4 +256,11 @@ TileDisplay.prototype.consumeGeneration = function() {
         alert("stop changing the style you fuck");
         return false;
     }
+}
+
+TileDisplay.prototype.generationCheck = function() {
+    if (generations > 0)
+        return true;
+    else
+        return false;
 }

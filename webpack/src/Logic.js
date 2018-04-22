@@ -276,12 +276,39 @@ function getCardinalDirectionCells (x, y) {
 
 // ================================= UNDO ==========================================
 
-function saveGameState(){
+// move the game state to the undo
+module.exports.saveGameState = function(){
 
+    // first clone the board
+    var newBoard = [];
+    
+    for (var i = 0 ; i < board.length; i++){
+        newBoard[i] = board[i].slice();
+    }
+
+    var savedState = 
+    {
+        lookup: cloneObject(lookup),
+        board: newBoard,
+        matches: cloneObject(matches),
+        lastColorDeleted: lastColorDeleted,
+    }
+
+    return savedState;
 }
 
-function retrieveGameState() {
-    
+// recover the state to a prior game state
+module.exports.recoverState = function(state) {
+    // recover the state
+    lookup = state.lookup;
+    board = state.board;
+    matches = state.matches;
+    lastColorDeleted = state.lastColorDeleted;
+}
+
+// clone a json object
+function cloneObject(obj){
+    return JSON.parse(JSON.stringify(obj));
 }
 
 // =================================== GETTER SETTER ================================
@@ -301,4 +328,8 @@ Logic.prototype.getLastColorDeleted = function() {
 
 Logic.prototype.getMatches = function() {
     return matches;
+}
+
+Logic.prototype.getBoard = function() {
+    return board;
 }

@@ -12,10 +12,18 @@
 
 .generate_button {
     margin: auto;
-    height: 250px;
+    height: 150px;
     width: 100px;
     position: fixed;
     top: 5%;
+}
+
+.undo_button {
+    margin: auto;
+    height: 100px;
+    width: 100px;
+    position: fixed;
+    top: 16%;
 }
 
 #top_bar {

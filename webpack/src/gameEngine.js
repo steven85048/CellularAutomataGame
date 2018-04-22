@@ -7,6 +7,7 @@ var TileDisplay = require('./TileDisplay.js');
 var RulesetDisplay = require('./RulesetDisplay.js');
 var GameNumber = require('./GameNumber.js');
 var GameEnd = require('./GameEnd.js');
+var Undo = require('./Undo.js');
 
 // conig
 var gameConfig = require('../configs/config.js');
@@ -59,6 +60,7 @@ function initialConfig() {
 
     // add generate button onclick
     document.getElementById("generate_button").addEventListener("click", generateCells, false);
+    document.getElementById("undo_button").addEventListener("click", undoOperation, false);
 
     // after the configuration is loaded, load the content the game needs
     loadAssets();
@@ -108,9 +110,10 @@ function gameCreate() {
     ruleSet =  require('../games/' + GameNumber.currGame + '/ruleset.js')
     generateRulesetDisplay(ruleSet.accepting_rule, true);
     generateRulesetDisplay(ruleSet.rules, false);
-    
-    // init the app timer
 
+    // init game ticker
+    app.ticker.add(delta => gameLoop(delta));
+    
 }
 
 // set the level based on the url
@@ -211,13 +214,25 @@ function generateRulesetDisplay(ruleSet, finalRule){
     }
 }
 
+// ====================== CLICK LISTENERS =================================
+
 // generate cells on button click
 function generateCells() {
-    // check for resources (in TileDisplay)
-    var check = tileDisplay.consumeGeneration();
+    if (tileDisplay.generationCheck()){
+        // save the game state
+        Undo.pushMemory();
 
-    if (check)
+        // consume generation
+        tileDisplay.consumeGeneration();
+
+        // then generate cells
         board.generateCells();
+    }
+}
+
+// for undoing operations
+function undoOperation() {
+    Undo.popMemory();
 }
 
 // ================================= MAIN GAME LOOP ====================================

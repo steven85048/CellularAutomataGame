@@ -10,6 +10,7 @@
 
 var gameConfig = require('../configs/config.js');
 var Logic = require('./Logic.js');
+var undo = require('./Undo.js');
 
 var tileDisplay;
 
@@ -106,6 +107,77 @@ function initTiles () {
     }
 }
 
+
+// ================================= UNDO ==========================================
+
+// move the game state to the undo
+module.exports.saveGameState = function(){
+    var savedState = 
+    {
+        blurMap: cloneObject(blurMap),
+    }
+
+    return savedState;
+}
+
+// recover the state to a prior game state
+module.exports.recoverState = function(state) {
+    // rerender board colors (based on board array)
+    rerenderBoard();
+
+    // reset the blur
+    resetBlurMap();
+
+    // recover the state
+    blurMap = state.blurMap;
+
+    // add the filters to the sprites
+    readdFilters();
+}
+
+// clone a json object
+function cloneObject(obj){
+    return JSON.parse(JSON.stringify(obj));
+}
+
+// rerender board
+function rerenderBoard() {
+    // get the board from logic
+    var currBoard = logic.getBoard();
+
+    // loop through board and set sprite color
+    for (var i = 0 ; i < currBoard.length; i++){
+        for (var j = 0 ; j < currBoard[0].length; j++){
+            // color
+            var color = currBoard[i][j];
+
+            // change the texture of the sprite
+            var newTexture = new PIXI.Texture(texture, tileArray[color]);
+            spriteArray[i][j].texture = newTexture;    
+        }
+    }
+}
+
+// readd the filters to the sprites
+function readdFilters() {
+
+    // set the filter
+    for (key in blurMap){
+        if (blurMap.hasOwnProperty(key)){
+            // the key got stringified so we have to turn it into an array
+            var arr = key.split(",");
+
+            var actualX = parseInt(arr[0]);
+            var actualY = parseInt(arr[1]);
+
+            // set the filter (the filter also comes in string format so we need to create another)
+            var blurFilter = new PIXI.filters.BlurFilter();
+            spriteArray[actualX][actualY].filters = [blurFilter];
+            blurMap[[actualX, actualY]] = blurFilter;        
+        }
+    }
+
+}
 
 // ======================================== TILE CRUD ======================================
 
@@ -224,6 +296,7 @@ Board.prototype.renderBlur = function() {
 
     // loop through the filters
     for (key in blurMap) {
+        //console.log(key);
         if (blurMap.hasOwnProperty(key)) {
             // get the filter
             var currBlurFilter = blurMap[key];
@@ -259,10 +332,13 @@ Board.prototype.generateCells = function() {
         addTile(matchPoints[i][0], matchPoints[i][1], matchPoints[i][2], true);
 }
 
-// ===================================== TILE EVENT LISTENERS =====================================
+// ===================================== TILE EVENT LISTRENERS =====================================
 
 // Event listener whenver button is clicked
 function tileClick () {
+    // save the state
+    undo.pushMemory();
+
     // extract the x and y grid coordinates
     var xCoord = this.x / cellWidth
     var yCoord =  this.y / cellHeight;
@@ -274,4 +350,4 @@ function tileClick () {
 // Change the color of the tile
 Board.prototype.changeColor = function (color) {
     currColor = color;
-}
+} 
