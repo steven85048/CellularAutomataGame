@@ -1,15 +1,17 @@
 // ============================ GLOBALS ==========================
 var PIXI;
 
+var gameConfig = require('../configs/config.js');
+
 // current rule for testing purposes
 var currRule;
 
 // cell width (relative to tileset)
-var cellWidth = 32;
-var cellHeight = 32;
+var cellWidth = gameConfig.gameConfig.tileCutWidth;
+var cellHeight = gameConfig.gameConfig.tileCutHeight;
 
 // tilemap init
-var numTiles = 10;
+var numTiles = gameConfig.gameConfig.numTiles;
 var tileArray = new Array(numTiles);
 
 // array of colors

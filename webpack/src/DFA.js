@@ -1,10 +1,10 @@
 // ============================================ GLOBALS ===================================
 
 // Get the game number and problem solved
-var GameNumber = require('./GameNumber.js');
+var GameNumber;
 var ProblemSolved = require('./GameEnd.js');
 
-var ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
+var ruleSet;
 
 /*
     DFA is encoded as a map starting from the startState. Each node is encoded as follows:
@@ -21,6 +21,10 @@ var startState;
 // ============================================ CLASS SETUP ================================
 
 var DFA = function() {
+    // wait to initialize gameNumber and ruleset
+    GameNumber = require('./GameNumber.js');
+    ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
+
     // preprocessing
     loadDFAFromRuleset();
 }

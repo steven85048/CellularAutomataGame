@@ -2,6 +2,8 @@
 
 // game config
 var gameConfig = require('../configs/config.js');
+var GameNumber = require('./GameNumber.js');
+
 var resources;
 
 // dom object
@@ -24,6 +26,10 @@ var numTiles = gameConfig.gameConfig.numTiles;
 var tileWidth = gameConfig.gameConfig.boardCellWidth;
 var tileHeight = gameConfig.gameConfig.boardCellHeight;
 
+// cell width (relative to tileset)
+var tileCutWidth = gameConfig.gameConfig.tileCutWidth;
+var tileCutHeight = gameConfig.gameConfig.tileCutHeight;
+
 var boardWidth = gameConfig.boardState.initialWidth;
 var boardHeight = gameConfig.boardState.initialHeight;
 
@@ -34,12 +40,12 @@ var generateButton;
 
 // =========================== CLASS INIT ========================
 
-var TileDisplay = function(aDocument, level) {
+var TileDisplay = function(aDocument) {
     // init globals
     document = aDocument;
 
     // get the resources
-    resources = require('../games/' + level + '/resources.js');
+    resources = require('../games/' + GameNumber.currGame + '/resources.js');
 
     // init generations and button
     generateButton = document.getElementById("generate_button");
@@ -71,8 +77,8 @@ function initMainContainer() {
     container = document.getElementById("tile_display");
 
     // calculate center margin and set attribute
-    var size = ((tileWidth + 50) * numTiles) + 10;
-    container.setAttribute('style', "overflow: hidden; width: " + size + "px; margin: auto;");
+    var size = (tileWidth + 5);
+    container.setAttribute('style', "overflow: hidden; width: " + size + "px; float:left; margin-top: 15px;margin-left: 50px;");
 
 }
 
@@ -84,7 +90,7 @@ function initTileDisplay() {
         newDiv.setAttribute('style', "display: inline-block; float:left; margin-right: 50px;")
 
         // get the tile position (in tilemap)
-        var tilePosition = (-1) * (i * tileWidth);
+        var tilePosition = (-1) * (i * tileCutWidth);
 
         // create the image
         var imageDiv = document.createElement("div");

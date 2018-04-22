@@ -12,9 +12,6 @@ var Undo = require('./Undo.js');
 // conig
 var gameConfig = require('../configs/config.js');
 
-// game number and ruleset for this level
-var currLevel = GameNumber.currGame;
-
 // get the ruleset for the current game number
 var ruleSet;
 
@@ -47,13 +44,14 @@ function initialConfig() {
         resolution: 1,
     });
 
-    // append the canvas of app
-    document.getElementById("main_container").appendChild(app.view);
-
     // then add the tile display
     var tileDisplayDiv = document.createElement("div");
     tileDisplayDiv.id = "tile_display";
     document.getElementById("main_container").appendChild(tileDisplayDiv);
+
+    // set the style and append the canvas of app
+    app.view.setAttribute('style', 'float:left');
+    document.getElementById("main_container").appendChild(app.view);
 
     // append a keydown event
     document.addEventListener('keydown', keyDownHandler)
@@ -61,6 +59,7 @@ function initialConfig() {
     // add generate button onclick
     document.getElementById("generate_button").addEventListener("click", generateCells, false);
     document.getElementById("undo_button").addEventListener("click", undoOperation, false);
+    document.getElementById("refresh_button").addEventListener("click", refreshLevel, false);
 
     // after the configuration is loaded, load the content the game needs
     loadAssets();
@@ -97,8 +96,11 @@ function loadAssets() {
 
 // Initialization of the first game state and the first draw of the map
 function gameCreate() {
+    // get the level from url
+    setLevel();
+
     // initialize tile selector
-    tileDisplay = new TileDisplay(document, currLevel);
+    tileDisplay = new TileDisplay(document);
 
     // Initialize board object
     board = new Board(PIXI, app, tileDisplay);
@@ -121,11 +123,14 @@ function setLevel() {
     // get the url
     var url_string = window.location.href;
 
-    console.log(url_string);
-
     // convert to URL object and get parameters
     var url = new URL(url_string);
-    console.log(url.searchParams.get("a"));
+    var levelNum = url.searchParams.get("level")
+
+    // only set if the parameter is nonempty
+    if (levelNum != null){
+        GameNumber.setProblem(levelNum);
+    }
 }
 
 // ================================= CELL GENERATION =================================
@@ -233,6 +238,11 @@ function generateCells() {
 // for undoing operations
 function undoOperation() {
     Undo.popMemory();
+}
+
+// refresh the level
+function refreshLevel() {
+    location.reload();
 }
 
 // ================================= MAIN GAME LOOP ====================================

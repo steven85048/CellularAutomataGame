@@ -6,24 +6,35 @@
 }
 
 #main_container {
-    text-align: center; 
     padding-top: 70px;
+    padding-left: 400px;
 }
 
 .generate_button {
     margin: auto;
     height: 150px;
-    width: 100px;
+    width: 5%;
     position: fixed;
-    top: 5%;
+    top: 85px;
+    left: 300px;
 }
 
 .undo_button {
     margin: auto;
     height: 100px;
-    width: 100px;
+    width: 5%;
     position: fixed;
-    top: 16%;
+    top: 255px;
+    left: 300px;
+}
+
+.refresh_button {
+    margin:auto;
+    height: 100px;
+    width: 5%;
+    position:fixed;
+    top: 370px;
+    left: 300px;
 }
 
 #top_bar {

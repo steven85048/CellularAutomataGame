@@ -38,6 +38,9 @@ var numCellsHeight = gameConfig.gameConfig.boardCellCountHeight;
 var offsetMainX = gameConfig.gameConfig.offsetX;
 var offsetMainY = gameConfig.gameConfig.offsetY;
 
+var tileCutWidth = gameConfig.gameConfig.tileCutWidth;
+var tileCutHeight = gameConfig.gameConfig.tileCutHeight;
+
 // PIXI and app vars
 var PIXI;
 var app;
@@ -102,7 +105,7 @@ function initTiles () {
 
     for (var i = 0 ; i < numTiles; i++){
         // create the rectangular cuts on the tilemaps
-        var rectangle = new PIXI.Rectangle(i * cellWidth, 0, cellWidth, cellHeight);
+        var rectangle = new PIXI.Rectangle(i * tileCutWidth, 0, tileCutWidth, tileCutHeight);
         tileArray[i] = rectangle;    
     }
 }

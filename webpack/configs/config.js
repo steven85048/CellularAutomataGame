@@ -1,15 +1,15 @@
 var exports = module.exports = {};
 
 exports.boardState = {
-    initialWidth: 1280,
-    initialHeight: 960,
+    initialWidth: 640,
+    initialHeight: 640,
 };
 
 exports.gameConfig = {
 
     // cell grid dimensions
-    boardCellCountWidth: 40,
-    boardCellCountHeight: 30,
+    boardCellCountWidth: 20,
+    boardCellCountHeight: 20,
     
     // dimensions of each cell
     boardCellWidth: 32,
@@ -20,7 +20,9 @@ exports.gameConfig = {
     offsetY: 0,
 
     // tileset configs
-    numTiles: 10,
+    numTiles: 6,
     initialColor: 1,
     zeroColor: 0,
+    tileCutWidth: 32,
+    tileCutHeight: 32,
 };
