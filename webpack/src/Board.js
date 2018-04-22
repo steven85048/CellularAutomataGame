@@ -154,6 +154,10 @@ function addTile(x, y, color, additional) {
         var disjointSet = matches[i][0];
         var genArray = matches[i][1];
         
+        // gen array is empty when in final state
+        if (genArray == null)
+            break;
+
         // get the relative corner of the set
         var corner = disjointSet.bounds[0];
 
