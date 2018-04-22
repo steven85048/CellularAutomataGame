@@ -22,8 +22,6 @@ var texture;
 // =========================== CLASS INIT ========================
 
 var RulesetDisplay = function(aPIXI, aRule, aSpriteWidth, aSpriteHeight) {    
-    console.log("ruleset display");
-
     // set globals
     PIXI = aPIXI;
     this.currRule = aRule;

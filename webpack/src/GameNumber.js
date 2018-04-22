@@ -3,7 +3,7 @@
 */
 
 // current problem
-module.exports.currGame = "level1";
+module.exports.currGame = "level2";
 
 // set the problem
 module.exports.setProblem = function(aCurrProblem) {

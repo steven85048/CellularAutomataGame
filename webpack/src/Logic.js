@@ -274,6 +274,16 @@ function getCardinalDirectionCells (x, y) {
     return dirs;
 }
 
+// ================================= UNDO ==========================================
+
+function saveGameState(){
+
+}
+
+function retrieveGameState() {
+    
+}
+
 // =================================== GETTER SETTER ================================
 
 // returns the corner for a (x,y) coordinate position

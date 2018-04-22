@@ -110,8 +110,19 @@ function gameCreate() {
     generateRulesetDisplay(ruleSet.rules, false);
     
     // init the app timer
-    app.ticker.add(delta => gameLoop(delta));
 
+}
+
+// set the level based on the url
+function setLevel() {
+    // get the url
+    var url_string = window.location.href;
+
+    console.log(url_string);
+
+    // convert to URL object and get parameters
+    var url = new URL(url_string);
+    console.log(url.searchParams.get("a"));
 }
 
 // ================================= CELL GENERATION =================================
