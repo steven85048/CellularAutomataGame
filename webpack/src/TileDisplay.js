@@ -4,6 +4,10 @@
 var gameConfig = require('../configs/config.js');
 var GameNumber = require('./GameNumber.js');
 
+// board object for color changing (by click)
+var board;
+
+// resources object from file
 var resources;
 
 // dom object
@@ -96,6 +100,8 @@ function initTileDisplay() {
         var imageDiv = document.createElement("div");
         imageDiv.classList.add("tile-image");
         imageDiv.setAttribute('style', "background-position: top 0px left " + tilePosition + "px; float: left; display: inline-block;");
+        imageDiv.addEventListener("click", changeColor, false);
+        imageDiv.id = "tile-" + i;
 
         // create the text
         var text = document.createElement("p");
@@ -173,10 +179,30 @@ function updateDisplay() {
         generateButton.disabled = true;
 }
 
+// ============================= CLICK LISTENER ==========================
+
+// change the color of the cell when clicked
+function changeColor(event) {
+    // get the clicked id
+    var id = event.target.id;
+    var idNum = parseInt(id.split("-")[1]);
+
+    // highlight that id
+    highlight(idNum);
+
+    // set the board
+    board = require('./Board.js');
+    board.changeColor(idNum);
+}
+
 // ============================= SETTING ==================================
 
 // select the cell at that location
 TileDisplay.prototype.highlightCell = function(index) {
+    highlight(index);
+}
+
+function highlight(index) {
     // check out of bounds
     if (index > numTiles)
         return;

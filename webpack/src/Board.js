@@ -354,3 +354,8 @@ function tileClick () {
 Board.prototype.changeColor = function (color) {
     currColor = color;
 } 
+
+// change color using a singleton of the board.js (kind of hacky)
+module.exports.changeColor = function(color) {
+    currColor = color;
+}

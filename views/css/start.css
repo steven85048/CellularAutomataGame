@@ -11,27 +11,30 @@
 }
 
 .generate_button {
+    font-size: 10px;
     margin: auto;
     height: 150px;
-    width: 5%;
+    width: 70px;
     position: fixed;
     top: 85px;
     left: 300px;
 }
 
 .undo_button {
+    font-size: 10px;
     margin: auto;
     height: 100px;
-    width: 5%;
+    width: 70px;
     position: fixed;
     top: 255px;
     left: 300px;
 }
 
 .refresh_button {
+    font-size: 10px;
     margin:auto;
     height: 100px;
-    width: 5%;
+    width: 70px;
     position:fixed;
     top: 370px;
     left: 300px;
