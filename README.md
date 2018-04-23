@@ -1,6 +1,6 @@
 # CellularAutomataGame
 
-Deployed Application Can be viewed here: https://tirmatch.herokuapp.com/?level=level2
+Deployed Application Can be viewed here: www.tirmat.com
 
 Game Help:
 - The game objective is to, using the resources of the user, to generate a specific structure of cells on the board. This structure of cells
