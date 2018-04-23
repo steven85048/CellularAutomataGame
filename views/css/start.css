@@ -10,6 +10,11 @@
     padding-left: 400px;
 }
 
+.level_change {
+    position: fixed;
+    right: 10%;
+}
+
 .generate_button {
     font-size: 10px;
     margin: auto;
