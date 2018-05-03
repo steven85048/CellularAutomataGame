@@ -50,3 +50,10 @@ A rule can only be matched if every flat edge of the set touches an empty space.
 			- Pass that input string through the dfa
 				- if the final state is a acceptance state then get the generating cells from the state and add those to the board (using the add subroutine)
 				- if the final state is not acceptance, then there is no match with a dictionary shape
+				
+### Tech Stack
+
+1. Application Deployed in Node.JS environment
+2. Logic is bundled using Webpack
+3. Rendering engine (for canvas) with PIXI.JS
+4. Non-canvas elements styled with Bootstrap 4
