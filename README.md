@@ -38,18 +38,18 @@ A rule can only be matched if every flat edge of the set touches an empty space.
 					- Update the bounds of that disjoint set using the bounds of the other disjoint sets (including the new point)
 					- Push the members to the disjoint set in the new array
 					- For those old members, also update the lookup table so that they are now pointing to that new disjoint set
-	- DFA find
-		- For a certain disjoint set:
-			- Sort the members points in row-major order
-			- Generate the input string for the DFA, where each character is of the from (movement direction, to-state color)
-				- The movement direction takes the form of the row-major order of traversal
-				- The to-state color should be:
-					- o if any of the adjacent neighbors are non-o
-					- x (don't care) if all 4 cells in cardinal direction of this cell are not non-o (may need a hash set for this)
-					- c where c is the color of the cell if the current cell is an exact match of a member
-			- Pass that input string through the dfa
-				- if the final state is a acceptance state then get the generating cells from the state and add those to the board (using the add subroutine)
-				- if the final state is not acceptance, then there is no match with a dictionary shape
+- DFA find
+	- For a certain disjoint set:
+		- Sort the members points in row-major order
+		- Generate the input string for the DFA, where each character is of the from (movement direction, to-state color)
+			- The movement direction takes the form of the row-major order of traversal
+			- The to-state color should be:
+				- o if any of the adjacent neighbors are non-o
+				- x (don't care) if all 4 cells in cardinal direction of this cell are not non-o (may need a hash set for this)
+				- c where c is the color of the cell if the current cell is an exact match of a member
+		- Pass that input string through the dfa
+			- if the final state is a acceptance state then get the generating cells from the state and add those to the board (using the add subroutine)
+			- if the final state is not acceptance, then there is no match with a dictionary shape
 				
 ### Tech Stack
 
