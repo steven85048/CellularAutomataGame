@@ -9,9 +9,8 @@ Generations can be done by pressing the button on the left, and tiles can be swi
 
 A rule can only be matched if every flat edge of the set touches an empty space. 
 
-Algorithm Pseudocode:
+### Algorithm Pseudocode:
 
-### Pattern matching Subroutine -
 - Preprocessing: Construct a DFA using the shape dictionary:
 		- Q: Each state is how a certain rectangle configuration 
 		- Epsilon: (Movement direction, To-State color)
