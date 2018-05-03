@@ -1,4 +1,4 @@
-# CellularAutomataGame
+# Tirmat
 
 Deployed Application Can be viewed here: www.tirmat.com
 
