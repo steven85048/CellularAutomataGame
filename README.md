@@ -10,6 +10,7 @@ Generations can be done by pressing the button on the left, and tiles can be swi
 A rule can only be matched if every flat edge of the set touches an empty space. 
 
 ### Algorithm Pseudocode:
+- High level idea: Use a modified version of the Aho-Corasick automaton that accepts a language of 2D patterns to match shapes of arbitrary size quickly. Keep track of all current sets on the board using disjoint set operations that sets the upper left corner as the root for each set. 
 
 - Preprocessing: Construct a DFA using the shape dictionary:
 	- Q: Each state is how a certain rectangle configuration 
