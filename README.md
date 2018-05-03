@@ -11,9 +11,9 @@ A rule can only be matched if every flat edge of the set touches an empty space.
 
 Algorithm Pseudocode:
 
-Pattern matching Subroutine -\
-	* Preprocessing: Construct a DFA using the shape dictionary:\
-		+ Q: Each state is how a certain rectangle configuration \
+#Pattern matching Subroutine -\
+## Preprocessing: Construct a DFA using the shape dictionary:\
+		### Q: Each state is how a certain rectangle configuration \
 		+ Epsilon: (Movement direction, To-State color)\
 		+ qs: Single cell in left corner\
 		+ QAccepting: States that represent the bottom right corner of the board (also if acceptance state, then put in the generating area)\
