@@ -94,4 +94,7 @@ module.exports.updateNumLevels = function(document) {
             selector.appendChild(newLink);
         }
     }
+
+    // also change level text
+    document.getElementById("levelText").innerHTML = ":" + this.currGame;
 }
