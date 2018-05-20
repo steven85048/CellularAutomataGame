@@ -23,7 +23,7 @@ var startState;
 var DFA = function() {
     // wait to initialize gameNumber and ruleset
     GameNumber = require('./GameNumber.js');
-    ruleSet = require('../games/' + GameNumber.currGame + '/ruleset.js');
+    ruleSet = GameNumber.getRuleset();
 
     // preprocessing
     loadDFAFromRuleset();

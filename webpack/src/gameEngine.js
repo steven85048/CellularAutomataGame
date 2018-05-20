@@ -99,6 +99,7 @@ function loadAssets() {
 function gameCreate() {
     // get the level from url
     setLevel();
+    GameNumber.updateNumLevels(document);
 
     // set the game tutorial text
     GameHelp.setHelpText(GameNumber.currGame, document);
