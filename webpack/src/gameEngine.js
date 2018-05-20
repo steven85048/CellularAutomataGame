@@ -8,6 +8,7 @@ var RulesetDisplay = require('./RulesetDisplay.js');
 var GameNumber = require('./GameNumber.js');
 var GameEnd = require('./GameEnd.js');
 var Undo = require('./Undo.js');
+var GameHelp = require('./GameHelp.js');
 
 // conig
 var gameConfig = require('../configs/config.js');
@@ -99,6 +100,9 @@ function gameCreate() {
     // get the level from url
     setLevel();
 
+    // set the game tutorial text
+    GameHelp.setHelpText(GameNumber.currGame, document);
+
     // initialize tile selector
     tileDisplay = new TileDisplay(document);
 
@@ -109,7 +113,7 @@ function gameCreate() {
     selector = new Selector(graphics, app);
 
     // create the rulesets
-    ruleSet =  require('../games/' + GameNumber.currGame + '/ruleset.js')
+    ruleSet =  GameNumber.getRuleset();
     generateRulesetDisplay(ruleSet.accepting_rule, true);
     generateRulesetDisplay(ruleSet.rules, false);
 
@@ -171,7 +175,7 @@ function generateRulesetDisplay(ruleSet, finalRule){
         cardHeader.id = headerNum;
 
         if (finalRule){
-            cardHeader.setAttribute('style', 'background-color: #f47142');
+            cardHeader.setAttribute('style', 'background-color: #42f4e8');
         }
 
         // create the header text

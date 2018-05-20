@@ -13,10 +13,29 @@
 
     <body style = "background-color: #cccbcb">
         
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+            
+                <div class="modal-header">
+                    <h4 class="modal-title">Tutorial</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+            
+                <div class="modal-body" id = "tutorial_text" > </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            
+                </div>
+            </div>
+        </div>
+
         <script src = "./scripts/bundle.js"></script>
 
         <div id = "top_bar"> 
-            <h3 style = "margin-top: 13px; margin-left: 93px"> TIRMAT </h3>
+            <h3 style = "margin-top: 13px; margin-left: 102px"> TIRMAT </h3>
             <div class = "dropdown level_change">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                     Levels
@@ -39,7 +58,8 @@
         </div>
 
         <button type = "button" class = "btn btn-primary generate_button" id = "generate_button"> (...) </button>
-        <button type = "button" class = "btn btn-primary undo_button" id = "undo_button"> Undo </button>
-        <button type = "button" class = "btn btn-primary refresh_button" id = "refresh_button"> Refresh </button>
+        <button type = "button" class = "btn btn-info undo_button" id = "undo_button"> Undo </button>
+        <button type = "button" class = "btn btn-info refresh_button" id = "refresh_button"> Refresh </button>
+        <button type = "button" class = "btn btn-secondary help_button" id = "help_button" data-toggle="modal" data-target="#myModal"> Help </button>
     </body>
 </html>

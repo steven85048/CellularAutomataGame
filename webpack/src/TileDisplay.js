@@ -49,7 +49,7 @@ var TileDisplay = function(aDocument) {
     document = aDocument;
 
     // get the resources
-    resources = require('../games/' + GameNumber.currGame + '/resources.js');
+    resources = GameNumber.getResources();
 
     // init generations and button
     generateButton = document.getElementById("generate_button");

@@ -338,7 +338,9 @@ Board.prototype.generateCells = function() {
 // ===================================== TILE EVENT LISTRENERS =====================================
 
 // Event listener whenver button is clicked
-function tileClick () {
+function tileClick (event) {
+    console.log(event.type);
+
     // save the state
     undo.pushMemory();
 
