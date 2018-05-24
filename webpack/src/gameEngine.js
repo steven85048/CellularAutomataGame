@@ -100,6 +100,7 @@ function gameCreate() {
     // get the level from url
     setLevel();
     GameNumber.updateNumLevels(document);
+    GameNumber.setNextLevel(document);
 
     // set the game tutorial text
     GameHelp.setHelpText(GameNumber.currGame, document);

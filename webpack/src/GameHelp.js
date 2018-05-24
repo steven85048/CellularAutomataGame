@@ -19,6 +19,6 @@ module.exports.setHelpText = function(levelNum, document) {
 
     } else {
         // set the button as unclickable
-       helpButton.style.visibility = "hidden";
+       helpButton.disabled = true;
     }
 }

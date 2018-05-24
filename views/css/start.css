@@ -56,6 +56,16 @@
     left: 298px;
 }
 
+.next_button {
+    font-size: 10px;
+    margin:auto;
+    height: 60px;
+    width: 70px;
+    position:fixed;
+    top: 480px;
+    left: 298px;
+}
+
 #top_bar {
     height: 65px;
     width: 100%;

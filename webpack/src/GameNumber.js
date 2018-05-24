@@ -80,6 +80,25 @@ module.exports.getResources = function() {
     return resources;
 }
 
+module.exports.setNextLevel = function(document) {
+    // get the next button
+    var nextButton = document.getElementById("next_button");
+
+    var hasSeen = false;
+    for (var key in levels) {
+        if (hasSeen) {
+            nextButton.onclick = () => {location.href = '/?level=' + key};
+            return;
+        }
+
+        if (levels.hasOwnProperty(key) && key === this.currGame) {
+            hasSeen = true;
+        }
+    }
+
+    nextButton.disabled = true;
+}
+
 module.exports.updateNumLevels = function(document) {
     // get the level selector
     var selector = document.getElementById("level_selector");
